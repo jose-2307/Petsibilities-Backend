@@ -1,0 +1,32 @@
+{
+  "name": "backend-petsibilities",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "lint": "eslint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jose-2307/Petsibilities-Backend.git"
+  },
+  "keywords": [],
+  "author": "José Luis Flores <joseluisflores2307@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jose-2307/Petsibilities-Backend/issues"
+  },
+  "homepage": "https://github.com/jose-2307/Petsibilities-Backend#readme",
+  "devDependencies": {
+    "eslint": "^8.23.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "nodemon": "^2.0.20",
+    "prettier": "^2.7.1"
+  },
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}

@@ -1,8 +1,8 @@
 const { Model, DataTypes } = require("sequelize");
 
-const SPECIES_TABLE = "species";
+const GENDER_TABLE = "genders";
 
-const SpeciesSchema = {
+const GenderSchema = {
   id: {
     allowNull: false,
     autoIncrement: true,
@@ -16,22 +16,22 @@ const SpeciesSchema = {
   },
 }
 
-class Species extends Model {
+class Gender extends Model {
   static associate(models) {
-    this.hasMany(models.Breed, {
-      as: "breeds",
-      foreignKey: "speciesId"
+    this.hasMany(models.Pet, {
+      as: "pets",
+      foreignKey: "genderId"
     });
   }
 
   static config(sequelize) {
     return {
       sequelize,
-      tableName: SPECIES_TABLE,
-      modelName: "Species",
+      tableName: GENDER_TABLE,
+      modelName: "Gender",
       timestamps: false
     }
   }
 }
 
-module.exports = { Species, SpeciesSchema, SPECIES_TABLE };
+module.exports = { Gender, GenderSchema, GENDER_TABLE };

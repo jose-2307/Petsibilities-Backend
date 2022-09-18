@@ -82,7 +82,12 @@ class User extends Model {
     this.belongsTo(models.City, {
       as: "city",
     });
-    this.belongsToMany();
+    this.belongsToMany(models.Pet, {
+      as: "my-pet",
+      through: models.UserPet,
+      foreignKey: "userId",
+      otherKey: "petId"
+    });
   }
 
   static config(sequelize) {

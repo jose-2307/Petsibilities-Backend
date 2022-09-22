@@ -61,7 +61,7 @@ router.patch("/:id",
   }
 );
 
-router.patch("/:id",
+router.delete("/:id",
   validatorHandler(getRoleSchema, "params"),
   async (req, res, next) => {
     try {

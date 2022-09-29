@@ -87,17 +87,35 @@ module.exports = {
         unique: false,
         allowNull: false,
       },
-      bankAccount: {
-        field: "bank_account",
+      bankAccountNumber: {
+        field: "bank_account_number",
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: true,
+      },
+      bankAccountType: {
+        field: "bank_account_type",
         type: DataTypes.STRING,
         unique: false,
-        allowNull: false,
+        allowNull: true,
+      },
+      bankName: {
+        field: "bank_name",
+        type: DataTypes.STRING,
+        unique: false,
+        allowNull: true,
       },
       score: {
         type: DataTypes.INTEGER,
         unique: false,
         allowNull: false,
         defaultValue: 5
+      },
+      houseSize: {
+        field: "hose_size",
+        type: DataTypes.INTEGER,
+        unique: false,
+        allowNull: true,
       },
       refreshToken: {
         field: "refresh_token",
@@ -113,7 +131,6 @@ module.exports = {
         field: "role_id",
         allowNull: false,
         type: DataTypes.INTEGER,
-        defaultValue: 1,
         references: {
           model: ROLE_TABLE,
           key: "id"

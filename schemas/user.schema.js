@@ -21,7 +21,7 @@ const createUserSchema = Joi.object({
   bankAccountType,
   bankName,
   houseSize,
-  roleId,
+  roleId: roleId.required(),
   cityId: cityId.required()
 });
 

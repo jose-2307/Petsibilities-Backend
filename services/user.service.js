@@ -39,9 +39,7 @@ class UserService {
     if(!user) {
       throw boom.notFound("user not found");
     }
-    user.forEach(user => {
-      delete user.dataValues.password;
-    });
+    delete user.dataValues.password;
     return user;
   }
 

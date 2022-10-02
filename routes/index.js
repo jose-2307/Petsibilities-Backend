@@ -13,6 +13,6 @@ function routerApi(app) {
   router.use("/cities",cityRouter);
   router.use("/users",userRouter);
   router.use("/auth",authRouter);
-}
+} //localhost:3000/api/v1/auth/login
 
 module.exports = routerApi;

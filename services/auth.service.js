@@ -43,6 +43,22 @@ class AuthService {
 
   }
 
+  async signRefreshToken(refreshToken) {
+    try {
+      const payloadRefresh = jwt.verify(refreshToken, config.jwtSecretRefresh);
+      const user = await serviceUser.findOne(payloadRefresh.sub);
+      if (user.refreshToken !== refreshToken) {
+        throw boom.unauthorized();
+      }
+      const accessToken = jwt.sign({ sub:payloadRefresh.sub, role:payloadRefresh.role }, config.jwtSecretLogin, {expiresIn: "20s"});
+      return {
+        accessToken
+      }
+    } catch (error) {
+      throw boom.unauthorized();
+    }
+  }
+
 
 
 }

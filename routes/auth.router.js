@@ -21,15 +21,16 @@ router.post("/login",
   }
 );
 
-// router.post("/refresh-token",
-//   validatorHandler(refreshTokenSchema),
-//   async (req, res, next) => {
-//     try {
-
-//     } catch (error) {
-//       next(error);
-//     }
-//   }
-// );
+router.post("/refresh-token",
+  validatorHandler(refreshTokenSchema),
+  async (req, res, next) => {
+    try {
+      const refreshToken = req.headers["refresh"];
+      res.json(await service.signRefreshToken(refreshToken));
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 module.exports = router;

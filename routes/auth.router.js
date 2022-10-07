@@ -33,4 +33,16 @@ router.post("/refresh-token",
   }
 );
 
+router.patch("/logout",
+  validatorHandler(refreshTokenSchema),
+  async (req, res, next) => {
+    try {
+      const refreshToken = req.headers["refresh"];
+      res.json(await service.logout(refreshToken));
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 module.exports = router;

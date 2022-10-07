@@ -59,6 +59,22 @@ class AuthService {
     }
   }
 
+  async logout(refreshToken) {
+    try {
+      const payloadRefresh = jwt.verify(refreshToken,config.jwtSecretRefresh);
+      const user = await serviceUser.findOne(payloadRefresh.sub);
+      if (user.refreshToken !== refreshToken) {
+        throw boom.unauthorized();
+      }
+      await serviceUser.update(user.id,{refreshToken:null});
+      return {
+        message:"Log out"
+      }
+    } catch (error) {
+      throw boom.unauthorized();
+    }
+  }
+
 
 
 }

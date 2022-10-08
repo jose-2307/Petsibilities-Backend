@@ -18,7 +18,7 @@ function routerApi(app) {
   router.use("/auth",authRouter);
   router.use("/profile",profileRouter);
   router.use("/species",speciesRouter);
-  router.user("/breeds",breedRouter);
+  router.use("/breeds",breedRouter);
 } //localhost:3000/api/v1/auth/login
 
 module.exports = routerApi;

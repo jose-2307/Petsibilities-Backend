@@ -6,7 +6,7 @@ const speciesId = Joi.number().integer();
 
 const createBreedSchema = Joi.object({
   name: name.required(),
-  regionId: speciesId.required()
+  speciesId: speciesId.required()
 });
 
 const getBreedSchema = Joi.object({

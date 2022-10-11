@@ -25,6 +25,21 @@ class PetService {
     return pet;
   }
 
+  async isOwner(userId, petId) { //verifica si este usuario es el último en relación a la mascota
+    const usersPet = await models.UserPet.findAll({
+      where: {
+        petId
+      }
+    });
+    usersPet.sort((a,b) => b.dataValues.id - a.dataValues.id);
+    const ownerId = usersPet[0].dataValues.userId;
+    const isMatch = ownerId == userId ? true : false;
+    if (!isMatch) {
+      throw boom.unauthorized();
+    }
+    return isMatch;
+  }
+
   async update(id, changes) {
     const pet = await this.findOne(id);
     const resp = await pet.update(changes);

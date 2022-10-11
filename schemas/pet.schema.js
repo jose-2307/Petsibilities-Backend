@@ -10,6 +10,7 @@ const adopted = Joi.boolean();
 const sterilized = Joi.boolean();
 const genderId = Joi.number().integer();
 const breedId = Joi.number().integer();
+const userId = Joi.number().integer();
 
 const createPetSchema = Joi.object({
   name: name.required(),
@@ -30,7 +31,8 @@ const updatePetSchema = Joi.object({
   wormed
 });
 const getPetSchema = Joi.object({
-  id: id.required()
+  id: id.required(),
+  userId
 });
 
 module.exports = { createPetSchema, getPetSchema, updatePetSchema }

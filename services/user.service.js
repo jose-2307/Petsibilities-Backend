@@ -56,6 +56,11 @@ class UserService {
     return user;
   }
 
+  async newPet(data) {
+    const myPet = await models.UserPet.create(data);
+    return myPet;
+  }
+
   async update(id, changes) {
     const user = await this.findOne(id);
     const resp = await user.update(changes);
@@ -67,6 +72,7 @@ class UserService {
     await user.destroy();
     return { id };
   }
+
 }
 
 module.exports = UserService;

@@ -48,20 +48,16 @@ router.post("/",
   }
 );
 
-/**
- * Debería de tomarse en cuenta el último registro del usuario al que esté ligado (dueño actual)
- * Pero...qué pasa si "B" desea adoptarle el perro a "A", y más adelante "A" desea adoptar de vuelta el perro a "B"???? Se vuelve a hacer el registro.
- */
-
-router.patch("/:id", //validar que el dueño (último) sea el que modifique.
-  passport.authenticate("jwt",{session: false}),
-  checkRole("Admin"),
+router.patch("/:id/:userId", //validar que el dueño (último) sea el que modifique.
+  // passport.authenticate("jwt",{session: false}),
+  // checkRole("Admin"),
   validatorHandler(getPetSchema, "params"),
   validatorHandler(updatePetSchema, "body"),
   async (req, res, next) => {
     try {
-      const { id } = req.params;
+      const { id, userId } = req.params;
       const body = req.body;
+      await service.isOwner(userId, id);
       const resp = await service.update(id,body);
       res.json(resp);
     } catch (error) {
@@ -70,13 +66,14 @@ router.patch("/:id", //validar que el dueño (último) sea el que modifique.
   }
 );
 
-router.delete("/:id", //validar que el dueño (último) sea el que elimine.
+router.delete("/:id/:userId", //validar que el dueño (último) sea el que elimine.
   passport.authenticate("jwt",{session: false}),
   checkRole("Admin"),
   validatorHandler(getPetSchema, "params"),
   async (req, res, next) => {
     try {
-      const { id } = req.params;
+      const { id,userId } = req.params;
+      await service.isOwner(userId, id);
       await service.delete(id);
       res.json({id});
     } catch (error) {

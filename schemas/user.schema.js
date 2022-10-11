@@ -13,6 +13,11 @@ const roleId = Joi.number().integer();
 const cityId = Joi.number().integer();
 
 
+//user-pet
+const userId = Joi.number().integer();
+const petId = Joi.number().integer();
+const date = Joi.date();
+
 const createUserSchema = Joi.object({
   name: name.required(),
   email: email.required(),
@@ -23,6 +28,12 @@ const createUserSchema = Joi.object({
   houseSize,
   roleId: roleId.required(),
   cityId: cityId.required()
+});
+
+const createNewPetSchema = Joi.object({
+  date: date.required(),
+  userId: userId.required(),
+  petId: petId.required()
 });
 
 const updateUserSchema = Joi.object({
@@ -40,4 +51,4 @@ const getUserSchema = Joi.object({
   id: id.required()
 });
 
-module.exports = { createUserSchema, updateUserSchema, getUserSchema }
+module.exports = { createUserSchema, updateUserSchema, getUserSchema, createNewPetSchema }

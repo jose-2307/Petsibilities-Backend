@@ -8,6 +8,7 @@ const profileRouter = require("./profile.router");
 const speciesRouter = require("./species.router");
 const breedRouter = require("./breed.router");
 const gendersRouter = require("./gender.router");
+const petsRouter = require("./pet.router");
 
 function routerApi(app) {
   const router = express.Router();
@@ -21,6 +22,7 @@ function routerApi(app) {
   router.use("/species",speciesRouter);
   router.use("/breeds",breedRouter);
   router.use("/genders",gendersRouter);
-} //localhost:3000/api/v1/auth/login
+  router.use("/pets",petsRouter);
+}
 
 module.exports = routerApi;

@@ -2,7 +2,7 @@ const Joi = require("joi");
 
 const id = Joi.number().integer();
 const name = Joi.string().max(15);
-const description = Joi.string().min(5).max(50);
+const description = Joi.string().min(10).max(250);
 const age = Joi.number().integer();
 const size = Joi.number().integer();
 const wormed = Joi.boolean();

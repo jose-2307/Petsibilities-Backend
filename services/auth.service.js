@@ -5,8 +5,8 @@ const jwt = require('jsonwebtoken');
 const { config } = require('./../config/config');
 const UserService = require('./user.service');
 const serviceUser = new UserService();
-const RoleService = require('./role.service');
-const serviceRole = new RoleService();
+//const RoleService = require('./role.service');
+//const serviceRole = new RoleService();
 
 class AuthService {
   async login(email, password) {
@@ -24,10 +24,10 @@ class AuthService {
   }
 
   async signToken(user) {
-    const { name } = await serviceRole.findOne(user.roleId);
+    //const { name } = await serviceRole.findOne(user.roleId);
     const payload = {
       sub: user.id,
-      role: name,
+      role: user.role.name,
     };
     const accessToken = jwt.sign(payload, config.jwtSecretLogin, {
       expiresIn: '20s',

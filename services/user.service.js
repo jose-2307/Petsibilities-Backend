@@ -29,8 +29,7 @@ class UserService {
 
   async findByEmail(email) {
     const resp = await models.User.findOne({
-      where: { email }
-    });
+      where: { email }, include: ["role"]});
     return resp;
   }
 

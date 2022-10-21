@@ -7,7 +7,7 @@ const { Breed, BreedSchema } = require("./breed.model");
 const { Gender, GenderSchema } = require("./gender.model");
 const { Pet, PetSchema } = require("./pet.model");
 const { UserPet, UserPetSchema } = require("./user-pet.model");
-
+const { Image, ImageSchema } = require("./image.model");
 
 
 function setupModels(sequelize) {
@@ -20,6 +20,7 @@ function setupModels(sequelize) {
   Gender.init(GenderSchema, Gender.config(sequelize));
   Pet.init(PetSchema, Pet.config(sequelize));
   UserPet.init(UserPetSchema, UserPet.config(sequelize));
+  Image.init(ImageSchema, Image.config(sequelize));
 
 
   Role.associate(sequelize.models);
@@ -30,6 +31,7 @@ function setupModels(sequelize) {
   Breed.associate(sequelize.models);
   Gender.associate(sequelize.models);
   Pet.associate(sequelize.models);
+  Image.associate(sequelize.models);
 }
 
 module.exports = setupModels;

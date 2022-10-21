@@ -82,6 +82,10 @@ class Pet extends Model {
     this.belongsTo(models.Gender, {
       as: "gender",
     });
+    this.hasMany(models.Image, {
+      as: "images",
+      foreignKey: "petId"
+    });
   }
 
   static config(sequelize) {

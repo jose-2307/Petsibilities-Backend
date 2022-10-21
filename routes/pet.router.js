@@ -12,12 +12,18 @@ const service = new PetService();
 router.get("/",
   async (req, res, next) => {
     try {
-      const { city } = req.query;
-      //console.log("----------------------------"+city)
-      if(!city) res.json(await service.find());
+      res.json(await service.find());
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
-      //const pets = await service.find();
-
+router.get("/filter/city/:city",
+  validatorHandler(getPetsByCitySchema, "params"),
+  async (req, res, next) => {
+    try {
+      const { city } = req.params;
       res.json(await service.findByCity(city));
     } catch (error) {
       next(error);
@@ -38,18 +44,6 @@ router.get("/:id",
   }
 );
 
-// router.get("/:id",
-//   validatorHandler(getPetsByCitySchema, "params"),
-//   async (req, res, next) => {
-//     try {
-//       const { id } = req.params;
-//       const pet = await service.findOne(id);
-//       res.json(pet);
-//     } catch (error) {
-//       next(error);
-//     }
-//   }
-// );
 
 router.post("/",
   // passport.authenticate("jwt",{session: false}),
@@ -75,7 +69,7 @@ router.patch("/:id/:userId", //validar que el dueño (último) sea el que modifi
     try {
       const { id, userId } = req.params;
       const body = req.body;
-      await service.isOwner(userId, id);
+      await service.isOwner(userId, id, true);
       const resp = await service.update(id,body);
       res.json(resp);
     } catch (error) {
@@ -91,7 +85,7 @@ router.delete("/:id/:userId", //validar que el dueño (último) sea el que elimi
   async (req, res, next) => {
     try {
       const { id,userId } = req.params;
-      await service.isOwner(userId, id);
+      await service.isOwner(userId, id, true);
       await service.delete(id);
       res.json({id});
     } catch (error) {

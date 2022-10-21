@@ -21,12 +21,6 @@ class PetService {
   }
 
   async findByCity(cityName) {
-    //obtenemos ciudad: {[users]}
-    //obtenemos [users]: {[users-pets]}
-    //obtenemos [users-pets]: {[pets]}
-    //obtenemos [pets] con adopted ==="false"
-    //verificar que el user sea el owner de la mascota(importante para el caso en el que una mascota haya sido adoptada por alguien de otra ciudad y éste la tenga en adopción) o obtener los únicos que cumplan con adopted ==="false"
-
     const city = await serviceCity.findByName(cityName);
     delete city.dataValues.name;
     delete city.dataValues.regionId;
@@ -35,12 +29,10 @@ class PetService {
     for(const user of city.users){
       users.push(await serviceUser.findOne(user.id));
     }
-
-    const pets = [];
+    let pets = [];
     for(const u of users){
       for(const pet of u.myPet){
-        console.log("--------------------"+u.id,pet.id)
-        if(pet.adopted === false && this.isOwner(u.id,pet.id) === true) {
+        if(pet.adopted === false && await this.isOwner(u.id,pet.id,false)) {
           pets.push(pet);
         }
       }
@@ -58,7 +50,7 @@ class PetService {
     return pet;
   }
 
-  async isOwner(userId, petId) { //verifica si este usuario es el último en relación a la mascota
+  async isOwner(userId, petId, bom) { //verifica si este usuario es el último en relación a la mascota
     const usersPet = await models.UserPet.findAll({
       where: {
         petId
@@ -67,9 +59,9 @@ class PetService {
     usersPet.sort((a,b) => b.dataValues.id - a.dataValues.id);
     const ownerId = usersPet[0].dataValues.userId;
     const isMatch = ownerId == userId ? true : false;
-    // if (!isMatch) {
-    //   throw boom.unauthorized();
-    // }
+    if (!isMatch && bom) {
+      throw boom.unauthorized();
+    }
     return isMatch;
   }
 

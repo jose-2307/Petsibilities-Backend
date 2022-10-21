@@ -100,7 +100,7 @@ class User extends Model {
       as: "city",
     });
     this.belongsToMany(models.Pet, {
-      as: "my-pet",
+      as: "myPet",
       through: models.UserPet,
       foreignKey: "userId",
       otherKey: "petId"

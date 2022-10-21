@@ -1,4 +1,5 @@
 const boom = require("@hapi/boom");
+const { where } = require("sequelize");
 
 const { models } = require("./../libs/sequelize");
 
@@ -13,6 +14,17 @@ class CityService {
   async find() {
     const cities = await models.City.findAll();
     return cities;
+  }
+
+  async findByName(name) {
+    const city = await models.City.findByPk({
+      where: {name},
+      include: ["users"],
+    });
+    if(!city) {
+      throw boom.notFound("city not found");
+    }
+    return city;
   }
 
   async findOne(id) {

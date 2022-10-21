@@ -1,6 +1,11 @@
 const boom = require("@hapi/boom");
 
+const CityService = require("./city.service");
+const UserService = require("./user.service");
 const { models } = require("./../libs/sequelize");
+
+const serviceCity = new CityService();
+const serviceUser = new CityService();
 
 class PetService {
   constructor(){}
@@ -11,6 +16,31 @@ class PetService {
   }
 
   async find() {
+    const pets = await models.Pet.findAll();
+    return pets;
+  }
+
+  async findByCity(cityName) {
+    //obtenemos ciudad: {[users]}
+    //obtenemos [users]: {[users-pets]}
+    //obtenemos [users-pets]: {[pets]}
+    //obtenemos [pets] con adopted ==="false"
+
+    const city = await serviceCity.findByName(cityName);
+    city.users;
+    //const users = city.users;
+    const users = [];
+    for(const user of city.users){
+      users.push(await serviceUser.findOne(user.id));
+    }
+    const usersPets = [];
+    for(const u of users){
+      for(const up of u.myPet){
+        usersPets.push();
+      }
+
+    }
+
     const pets = await models.Pet.findAll();
     return pets;
   }

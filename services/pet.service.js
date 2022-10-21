@@ -25,23 +25,26 @@ class PetService {
     //obtenemos [users]: {[users-pets]}
     //obtenemos [users-pets]: {[pets]}
     //obtenemos [pets] con adopted ==="false"
+    //verificar que el user sea el owner de la mascota o obtener los únicos que cumplan con adopted ==="false"
 
     const city = await serviceCity.findByName(cityName);
     city.users;
     //const users = city.users;
-    const users = [];
+    const users = []; //[user1[pet1,pet2],user2[pet3,...,pet1],...]
     for(const user of city.users){
       users.push(await serviceUser.findOne(user.id));
     }
-    const usersPets = [];
+    const pets = [];
     for(const u of users){
       for(const up of u.myPet){
-        usersPets.push(await);
+        if(up.adopted === "false") {
+          pets.push(up);
+        }
       }
-
     }
 
-    const pets = await models.Pet.findAll();
+    //obtener únicos de pets
+
     return pets;
   }
 

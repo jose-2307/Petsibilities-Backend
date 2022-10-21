@@ -25,7 +25,7 @@ class PetService {
     //obtenemos [users]: {[users-pets]}
     //obtenemos [users-pets]: {[pets]}
     //obtenemos [pets] con adopted ==="false"
-    //verificar que el user sea el owner de la mascota o obtener los únicos que cumplan con adopted ==="false"
+    //verificar que el user sea el owner de la mascota(importante para el caso en el que una mascota haya sido adoptada por alguien de otra ciudad y éste la tenga en adopción) o obtener los únicos que cumplan con adopted ==="false"
 
     const city = await serviceCity.findByName(cityName);
     city.users;

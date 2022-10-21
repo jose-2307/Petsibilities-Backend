@@ -5,7 +5,7 @@ const UserService = require("./user.service");
 const { models } = require("./../libs/sequelize");
 
 const serviceCity = new CityService();
-const serviceUser = new CityService();
+const serviceUser = new UserService();
 
 class PetService {
   constructor(){}
@@ -28,23 +28,23 @@ class PetService {
     //verificar que el user sea el owner de la mascota(importante para el caso en el que una mascota haya sido adoptada por alguien de otra ciudad y éste la tenga en adopción) o obtener los únicos que cumplan con adopted ==="false"
 
     const city = await serviceCity.findByName(cityName);
-    city.users;
-    //const users = city.users;
+    delete city.dataValues.name;
+    delete city.dataValues.regionId;
+    delete city.dataValues.id;
     const users = []; //[user1[pet1,pet2],user2[pet3,...,pet1],...]
     for(const user of city.users){
       users.push(await serviceUser.findOne(user.id));
     }
+
     const pets = [];
     for(const u of users){
-      for(const up of u.myPet){
-        if(up.adopted === "false") {
-          pets.push(up);
+      for(const pet of u.myPet){
+        console.log("--------------------"+u.id,pet.id)
+        if(pet.adopted === false && this.isOwner(u.id,pet.id) === true) {
+          pets.push(pet);
         }
       }
     }
-
-    //obtener únicos de pets
-
     return pets;
   }
 
@@ -67,9 +67,9 @@ class PetService {
     usersPet.sort((a,b) => b.dataValues.id - a.dataValues.id);
     const ownerId = usersPet[0].dataValues.userId;
     const isMatch = ownerId == userId ? true : false;
-    if (!isMatch) {
-      throw boom.unauthorized();
-    }
+    // if (!isMatch) {
+    //   throw boom.unauthorized();
+    // }
     return isMatch;
   }
 

@@ -11,6 +11,8 @@ const sterilized = Joi.boolean();
 const genderId = Joi.number().integer();
 const breedId = Joi.number().integer();
 const userId = Joi.number().integer();
+const city = Joi.string().min(3).max(10)
+
 
 const createPetSchema = Joi.object({
   name: name.required(),
@@ -35,4 +37,7 @@ const getPetSchema = Joi.object({
   userId
 });
 
-module.exports = { createPetSchema, getPetSchema, updatePetSchema }
+const getPetsByCitySchema = Joi.object({
+  city: city.required(),
+});
+module.exports = { createPetSchema, getPetSchema, updatePetSchema, getPetsByCitySchema }

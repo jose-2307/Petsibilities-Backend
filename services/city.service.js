@@ -17,7 +17,7 @@ class CityService {
   }
 
   async findByName(name) {
-    const city = await models.City.findByPk({
+    const city = await models.City.findOne({
       where: {name},
       include: ["users"],
     });

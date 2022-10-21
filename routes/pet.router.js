@@ -3,7 +3,7 @@ const passport = require("passport");
 
 const PetService = require("./../services/pet.service");
 const validatorHandler = require("./../middlewares/validator.handler");
-const { createPetSchema,updatePetSchema,getPetSchema } = require("./../schemas/pet.schema");
+const { createPetSchema,updatePetSchema,getPetSchema,getPetsByCitySchema } = require("./../schemas/pet.schema");
 const { checkRole } = require("./../middlewares/auth.handler");
 
 const router = express.Router();
@@ -12,8 +12,13 @@ const service = new PetService();
 router.get("/",
   async (req, res, next) => {
     try {
-      const pets = await service.find();
-      res.json(pets);
+      const { city } = req.query;
+      //console.log("----------------------------"+city)
+      if(!city) res.json(await service.find());
+
+      //const pets = await service.find();
+
+      res.json(await service.findByCity(city));
     } catch (error) {
       next(error);
     }
@@ -32,6 +37,19 @@ router.get("/:id",
     }
   }
 );
+
+// router.get("/:id",
+//   validatorHandler(getPetsByCitySchema, "params"),
+//   async (req, res, next) => {
+//     try {
+//       const { id } = req.params;
+//       const pet = await service.findOne(id);
+//       res.json(pet);
+//     } catch (error) {
+//       next(error);
+//     }
+//   }
+// );
 
 router.post("/",
   // passport.authenticate("jwt",{session: false}),

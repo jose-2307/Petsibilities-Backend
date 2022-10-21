@@ -12,8 +12,13 @@ const service = new CityService();
 router.get("/",
   async (req, res, next) => {
     try {
-      const cities = await service.find();
-      res.json(cities);
+      const { city } = req.query;
+      //console.log("----------------------------"+city)
+      if(!city) res.json(await service.find());
+
+      //const pets = await service.find();
+
+      res.json(await service.findByName(city));
     } catch (error) {
       next(error);
     }

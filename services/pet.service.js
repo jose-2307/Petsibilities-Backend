@@ -36,7 +36,7 @@ class PetService {
     const usersPets = [];
     for(const u of users){
       for(const up of u.myPet){
-        usersPets.push();
+        usersPets.push(await);
       }
 
     }

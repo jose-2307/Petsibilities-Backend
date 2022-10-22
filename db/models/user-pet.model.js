@@ -42,6 +42,12 @@ const UserPetSchema = {
 
 class UserPet extends Model {
   static associate(models) {
+    this.belongsToMany(models.User, {
+      as: "myPetitions",
+      through: models.Petition,
+      foreignKey: "userPetId",
+      otherKey: "userId"
+    });
   }
 
   static config(sequelize) {

@@ -71,6 +71,18 @@ class PetService {
     return isMatch;
   }
 
+  async owner(petId) { //sin probar
+    const usersPet = await models.UserPet.findAll({
+      where: {
+        petId
+      }
+    });
+    usersPet.sort((a,b) => b.dataValues.id - a.dataValues.id);
+    const ownerId = usersPet[0].dataValues.userId;
+    const user = await serviceUser.findOne(ownerId);
+    return user;
+  }
+
   async update(id, changes) {
     const pet = await this.findOne(id);
     const resp = await pet.update(changes);

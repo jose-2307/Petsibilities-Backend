@@ -56,6 +56,18 @@ const UserSchema = {
     unique: false,
     allowNull: true,
   },
+  urlImage: {
+    field: "url_image",
+    type: DataTypes.STRING,
+    unique: false,
+    allowNull: true,
+  },
+  phoneNumber: {
+    field: "phone_number",
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: false,
+  },
   refreshToken: {
     field: "refresh_token",
     allowNull: true,

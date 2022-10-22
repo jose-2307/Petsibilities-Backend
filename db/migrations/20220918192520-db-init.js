@@ -10,8 +10,8 @@ const { BREED_TABLE } = require("./../models/breed.model");
 const { GENDER_TABLE } = require("./../models/gender.model");
 const { PET_TABLE } = require("./../models/pet.model");
 const { USER_PET_TABLE } = require("./../models/user-pet.model");
-
-
+const { IMAGE_TABLE } = require("./../models/image.model");
+const { PETITION_TABLE } = require("./../models/petition.model");
 
 module.exports = {
   async up (queryInterface) {
@@ -116,6 +116,18 @@ module.exports = {
         type: DataTypes.INTEGER,
         unique: false,
         allowNull: true,
+      },
+      urlImage: {
+        field: "url_image",
+        type: DataTypes.STRING,
+        unique: false,
+        allowNull: true,
+      },
+      phoneNumber: {
+        field: "phone_number",
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
       },
       refreshToken: {
         field: "refresh_token",
@@ -269,6 +281,30 @@ module.exports = {
         onDelete: "SET NULL"
       }
     });
+    await queryInterface.createTable(IMAGE_TABLE, {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER
+      },
+      url: {
+        type: DataTypes.STRING,
+        unique: false,
+        allowNull: false,
+      },
+      petId: {
+        field: "pet_id",
+        allowNull: false,
+        type: DataTypes.INTEGER,
+        references: {
+          model: PET_TABLE,
+          key: "id"
+        },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      }
+    });
     await queryInterface.createTable(USER_PET_TABLE, {
       id: {
         allowNull: false,
@@ -304,10 +340,52 @@ module.exports = {
         onDelete: "CASCADE"
       },
     });
+    await queryInterface.createTable(PETITION_TABLE, {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER
+      },
+      comment: {
+        type: DataTypes.STRING,
+        unique: false,
+        allowNull: false,
+      },
+      date: {
+        type: DataTypes.DATEONLY,
+        unique: false,
+        allowNull: false,
+      },
+      userId: {
+        field: "user_id",
+        allowNull: false,
+        type: DataTypes.INTEGER,
+        references: {
+          model: USER_TABLE,
+          key: "id"
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE"
+      },
+      userPetId: {
+        field: "user_pet_id",
+        allowNull: false,
+        type: DataTypes.INTEGER,
+        references: {
+          model: USER_PET_TABLE,
+          key: "id"
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE"
+      },
+    });
   },
 
   async down (queryInterface) {
+    await queryInterface.dropTable(PETITION_TABLE);
     await queryInterface.dropTable(USER_PET_TABLE);
+    await queryInterface.dropTable(IMAGE_TABLE);
     await queryInterface.dropTable(PET_TABLE);
     await queryInterface.dropTable(GENDER_TABLE);
     await queryInterface.dropTable(BREED_TABLE);

@@ -30,7 +30,9 @@ const updatePetSchema = Joi.object({
   description,
   age,
   size,
-  wormed
+  wormed,
+  adopted,
+  sterilized
 });
 const getPetSchema = Joi.object({
   id: id.required(),

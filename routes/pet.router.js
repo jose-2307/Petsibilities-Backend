@@ -12,7 +12,9 @@ const service = new PetService();
 router.get("/",
   async (req, res, next) => {
     try {
-      res.json(await service.find());
+      const { available } = req.query;
+      if(!available) res.json(await service.find(false));
+      res.json(await service.find(available));
     } catch (error) {
       next(error);
     }

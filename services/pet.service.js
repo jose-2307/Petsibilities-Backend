@@ -15,8 +15,14 @@ class PetService {
     return newPet;
   }
 
-  async find() {
-    const pets = await models.Pet.findAll();
+  async find(available) {
+    if (!available) {
+      const pets = await models.Pet.findAll();
+      return pets;
+    }
+    const pets = await models.Pet.findAll({
+      where: {adopted: false}
+    });
     return pets;
   }
 

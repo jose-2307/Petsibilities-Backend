@@ -11,6 +11,8 @@ const score = Joi.number().integer().min(1).max(5);
 const houseSize = Joi.number().integer().min(10);
 const roleId = Joi.number().integer();
 const cityId = Joi.number().integer();
+const urlImage = Joi.string().alphanum();
+const phoneNumber = Joi.string().min(12).max(12);
 
 
 //user-pet
@@ -27,7 +29,9 @@ const createUserSchema = Joi.object({
   bankName,
   houseSize,
   roleId: roleId.required(),
-  cityId: cityId.required()
+  cityId: cityId.required(),
+  phoneNumber: phoneNumber.required(),
+  urlImage
 });
 
 const createNewPetSchema = Joi.object({
@@ -44,7 +48,9 @@ const updateUserSchema = Joi.object({
   bankAccountType,
   bankName,
   houseSize,
-  score
+  score,
+  urlImage,
+  phoneNumber
 });
 
 const getUserSchema = Joi.object({

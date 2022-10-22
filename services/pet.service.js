@@ -42,7 +42,7 @@ class PetService {
 
   async findOne(id) {
     const pet = await models.Pet.findByPk(id, {
-      include: ["breed","gender"]
+      include: ["breed","gender","images"]
     });
     if(!pet) {
       throw boom.notFound("pet not found");

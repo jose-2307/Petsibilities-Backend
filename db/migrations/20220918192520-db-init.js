@@ -357,6 +357,12 @@ module.exports = {
         unique: false,
         allowNull: false,
       },
+      acepted: {
+        type: DataTypes.BOOLEAN,
+        unique: false,
+        allowNull: false,
+        defaultValue: false
+      },
       userId: {
         field: "user_id",
         allowNull: false,

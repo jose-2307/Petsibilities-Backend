@@ -13,7 +13,7 @@ const servicePet = new PetService();
 class PetitionService {
   constructor(){}
 
-  async create(data) { //user_id, user_pet_id, commet, date
+  async create(data) {
     const { userId, userPetId, comment, date } = data;
     const adopter = await serviceUser.findOne(userId);
     const userPet = await serviceUser.findOneUserPet(userPetId);

@@ -1,11 +1,12 @@
-const boom = require('@hapi/boom');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const boom = require("@hapi/boom");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 
-const { config } = require('./../config/config');
-const UserService = require('./user.service');
+const { config } = require("./../config/config");
+const UserService = require("./user.service");
 const serviceUser = new UserService();
-//const RoleService = require('./role.service');
+//const RoleService = require("./role.service");
 //const serviceRole = new RoleService();
 
 class AuthService {
@@ -80,6 +81,25 @@ class AuthService {
       throw boom.unauthorized();
     }
   }
+
+  async sendMail(infoMail){
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      secure: true,
+      port: 465,
+      auth: {
+          user: config.email,
+          pass: config.emailPass,
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    });
+
+    await transporter.sendMail(infoMail);
+    return { message: "mail sent" };
+  }
 }
+
 
 module.exports = AuthService;

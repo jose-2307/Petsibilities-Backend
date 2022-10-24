@@ -8,6 +8,8 @@ const config = {
   jwtSecretLogin: process.env.JWT_SECRET_LOGIN,
   jwtSecretRefresh: process.env.JWT_SECRET_REFRESH,
   jwtSecretRecovery: process.env.JWT_SECRET_RECOVERY_PASSWORD,
+  email: process.env.EMAIL,
+  emailPass: process.env.EMAIL_PASS,
 }
 
 module.exports = { config };

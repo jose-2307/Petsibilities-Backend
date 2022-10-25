@@ -24,7 +24,7 @@ class PetitionService {
       to: `${adopter.email}`,
       subject: "Petición enviada con éxito.",
       html: `<p>
-        Acabas de solicitar la adopción de ${pet.name}. ¡Buena Suerte!
+        Acabas de solicitar la adopción de ${pet.name}. ¡Buena suerte!
         <br>Por favor <b>espara hasta nuevo aviso</b>, mientras que el dueño evalúa tu petición.
       </p>`
     }
@@ -34,7 +34,9 @@ class PetitionService {
       subject: "Petición de adopción recibida.",
       html: `<p>
         ¡Hola, ${owner.name}! Acabas de recibir una petición de adopción para ${pet.name}.
-        <br><b>Detalle de la petición:</b>
+        <br>
+        <br>
+        <b>Detalle de la petición:</b>
           <ul>
             <li>Nombre del postulante: ${adopter.name}</li>
             <li>Comentario: ${comment}</li>
@@ -52,10 +54,16 @@ class PetitionService {
     }
   }
 
-  async find() {
+  async findSent(userId) {
     const petitions = await models.Petition.findAll();
     return petitions;
   }
+
+  async findReceived(userId) {
+    const petitions = await models.Petition.findAll();
+    return petitions;
+  }
+
 
   async findOne(id) {
     const petition = await models.Petition.findByPk(id)
@@ -65,7 +73,13 @@ class PetitionService {
     return petition;
   }
 
-  async delete(id) {
+  async update(id,changes) { //mandar email
+    const petition = await this.findOne(id);
+    const resp = await petition.update(changes);
+    return resp;
+  }
+
+  async delete(id) { //mandar email
     const petition = await this.findOne(id);
     await petition.destroy();
     return { id };

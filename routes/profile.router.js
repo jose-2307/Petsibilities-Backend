@@ -61,13 +61,26 @@ router.post("/petition",
   }
 );
 
-router.get("/petition",
+router.get("/petition/sent",
   passport.authenticate("jwt", {session: false}),
   async (req, res, next) => {
     try {
       const user = req.user
       const petitions = await servicePetition.findSent(user.sub);
-      res.status(201).json(petitions);
+      res.status(200).json(petitions);
+    } catch (error) {
+      next(error)
+    }
+  }
+);
+
+router.get("/petition/received",
+  passport.authenticate("jwt", {session: false}),
+  async (req, res, next) => {
+    try {
+      const user = req.user
+      const petitions = await servicePetition.findReceived(user.sub);
+      res.status(200).json(petitions);
     } catch (error) {
       next(error)
     }

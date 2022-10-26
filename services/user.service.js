@@ -62,7 +62,7 @@ class UserService {
   }
 
   async findOneUserPet(id) {
-    const up = await models.UserPet.findByPk(id)
+    const up = await models.UserPet.findByPk(id);
     if(!up) {
       throw boom.notFound("user-pet relationship not found");
     }

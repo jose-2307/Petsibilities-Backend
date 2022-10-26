@@ -6,6 +6,7 @@ const AuthService = require("./auth.service");
 const UserService = require("./user.service");
 const PetService = require("./pet.service");
 
+
 const serviceAuth = new AuthService();
 const serviceUser = new UserService();
 const servicePet = new PetService();
@@ -17,7 +18,7 @@ class PetitionService {
     const { userId, userPetId, comment, date } = data;
     const validate = await models.Petition.findAll({where:{userId,userPetId}});
     if (validate.length >= 1){
-      throw boom.badRequest({message:"Petition already requested."});
+      throw boom.conflict({message:"Petition already exists."});
     }
     const adopter = await serviceUser.findOne(userId);
     const userPet = await serviceUser.findOneUserPet(userPetId);
@@ -76,8 +77,29 @@ class PetitionService {
   }
 
   async findReceived(userId) {
-    const petitions = await models.Petition.findAll();
-    return petitions;
+    const userPets = await models.UserPet.findAll({where:{userId}});
+    let petitions = [];
+    for (const up of userPets){
+      petitions.push(await models.Petition.findAll({where:{userPetId:up.id}}));
+    }
+    petitions = petitions.flat(1);
+    const userPetsPetitions = [];
+    const adopters = [];
+    for (const p of petitions) {
+      userPetsPetitions.push(await serviceUser.findOneUserPet(p.userPetId));
+      let adopter = await serviceUser.findOne(p.userId);
+      adopters.push({name: adopter.name, email: adopter.email, score: adopter.score, houseSize: adopter.houseSize, urlImage: adopter.urlImage, phoneNumber: adopter.phoneNumber, city: adopter.city.name});
+    }
+    const namePets = [];
+    for (const upp of userPetsPetitions) {
+      let pet = await servicePet.findOne(upp.petId);
+      namePets.push({name:pet.name,images:pet.images});
+    }
+    const petitionsDetails = [];
+    for (let i = 0; i <petitions.length; i++) {
+      petitionsDetails.push({petition:petitions[i],pet:namePets[i],adopter:adopters[i]});
+    }
+    return {petitionsDetails};
   }
 
 

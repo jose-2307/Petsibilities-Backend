@@ -87,5 +87,22 @@ router.get("/petition/received",
   }
 );
 
+router.patch("/petition/:id",
+  passport.authenticate("jwt", {session: false}),
+  validatorHandler(getPetitionSchema, "params"),
+  validatorHandler(updatePetitionSchema, "body"),
+  async (req, res, next) => {
+    try {
+      const user = req.user;
+      const { id } = req.params;
+      const body = req.body;
+      const petition = await servicePetition.update(user.sub,id,body);
+      res.json(petition);
+    } catch (error) {
+      next(error)
+    }
+  }
+);
+
 
 module.exports = router;

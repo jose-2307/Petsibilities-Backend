@@ -111,13 +111,28 @@ class PetitionService {
     return petition;
   }
 
-  async update(id,changes) { //mandar email
+  async update(userId,id,changes) { //mandar mail
     const petition = await this.findOne(id);
-    const resp = await petition.update(changes);
-    return resp;
+    const userPet = await serviceUser.findOneUserPet(petition.userPetId);
+    if (userPet.userId != userId || changes.acepted === false) {
+      throw boom.unauthorized();
+    }
+    const pet = await servicePet.findOne(userPet.petId);
+    const adopter = await serviceUser.findOne(petition.userId);
+    const adopted = await petition.update({acepted:changes.acepted});
+    const mail = {
+      from: config.email,
+      to: `${adopter.email}`,
+      subject: "Petición de adopción aceptada.",
+      html: `<p>
+        ¡Felicidades ${adopter.name}! Tu petición de adopción para ${pet.name} fue <b>aprobada con éxito<b>.
+      </p>`
+    }
+    const resp1 = await serviceAuth.sendMail(mail);
+    return {resp1,adopted,petition};
   }
 
-  async delete(id) { //mandar email
+  async delete(id) { //mandar mail
     const petition = await this.findOne(id);
     await petition.destroy();
     return { id };

@@ -13,8 +13,12 @@ const servicePet = new PetService();
 class PetitionService {
   constructor(){}
 
-  async create(data) { //controlar el intento de re-postular a un usuario-mascota
+  async create(data) {
     const { userId, userPetId, comment, date } = data;
+    const validate = await models.Petition.findAll({where:{userId,userPetId}});
+    if (validate.length >= 1){
+      throw boom.badRequest({message:"Petition already requested."});
+    }
     const adopter = await serviceUser.findOne(userId);
     const userPet = await serviceUser.findOneUserPet(userPetId);
     const owner = await serviceUser.findOne(userPet.userId);

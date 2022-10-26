@@ -13,7 +13,7 @@ const servicePet = new PetService();
 class PetitionService {
   constructor(){}
 
-  async create(data) {
+  async create(data) { //controlar el intento de re-postular a un usuario-mascota
     const { userId, userPetId, comment, date } = data;
     const adopter = await serviceUser.findOne(userId);
     const userPet = await serviceUser.findOneUserPet(userPetId);
@@ -55,8 +55,20 @@ class PetitionService {
   }
 
   async findSent(userId) {
-    const petitions = await models.Petition.findAll();
-    return petitions;
+    const petitions = await models.Petition.findAll({where:{userId}});
+    const userPets = [];
+    const pets = [];
+    for (const p of petitions) {
+      userPets.push(await serviceUser.findOneUserPet(p.userPetId));
+    }
+    for (const up of userPets) {
+      pets.push(await servicePet.findOne(up.petId));
+    }
+    const petitionsPets = [];
+    for (let i = 0; i <petitions.length; i++) {
+      petitionsPets.push({petition:petitions[i],pet:pets[i]});
+    }
+    return {petitionsPets};
   }
 
   async findReceived(userId) {

@@ -61,5 +61,18 @@ router.post("/petition",
   }
 );
 
+router.get("/petition",
+  passport.authenticate("jwt", {session: false}),
+  async (req, res, next) => {
+    try {
+      const user = req.user
+      const petitions = await servicePetition.findSent(user.sub);
+      res.status(201).json(petitions);
+    } catch (error) {
+      next(error)
+    }
+  }
+);
+
 
 module.exports = router;

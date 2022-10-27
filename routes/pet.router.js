@@ -21,7 +21,7 @@ router.get("/",
   }
 );
 
-router.get("/filter/city/:city",
+router.get("/filter/commune/:city",
   validatorHandler(getPetsByCitySchema, "params"),
   async (req, res, next) => {
     try {

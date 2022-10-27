@@ -132,10 +132,26 @@ class PetitionService {
     return {resp1,adopted,petition};
   }
 
-  async delete(id) { //mandar mail
+  async delete(userId,id) { //mandar mail
     const petition = await this.findOne(id);
+    const userPet = await serviceUser.findOneUserPet(petition.userPetId);
+    if (userPet.userId != userId) {
+      throw boom.unauthorized();
+    }
+    const pet = await servicePet.findOne(userPet.petId);
+    const adopter = await serviceUser.findOne(petition.userId);
+    const mail = {
+      from: config.email,
+      to: `${adopter.email}`,
+      subject: "Petición de adopción rechazada.",
+      html: `<p>
+        ¡Lo sentimos ${adopter.name}! Tu petición de adopción para ${pet.name} fue <b>rechazada por el dueño<b>.
+      </p>`
+    }
+    const resp1 = await serviceAuth.sendMail(mail);
+
     await petition.destroy();
-    return { id };
+    return { id, resp1 };
   }
 }
 

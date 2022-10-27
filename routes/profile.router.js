@@ -104,5 +104,20 @@ router.patch("/petition/:id",
   }
 );
 
+router.delete("/petition/:id",
+  passport.authenticate("jwt", {session: false}),
+  validatorHandler(getPetitionSchema, "params"),
+  async (req, res, next) => {
+    try {
+      const user = req.user;
+      const { id } = req.params;
+      await servicePetition.delete(user.sub,id);
+      res.json({id});
+    } catch (error) {
+      next(error)
+    }
+  }
+);
+
 
 module.exports = router;

@@ -36,7 +36,7 @@ const createUserSchema = Joi.object({
 });
 
 const createNewPetSchema = Joi.object({
-  date: date.required(),
+  date,
   userId: userId.required(),
   petId: petId.required()
 });

@@ -1,4 +1,4 @@
-const { Model, DataTypes } = require("sequelize");
+const { Model, DataTypes, Sequelize } = require("sequelize");
 const { USER_TABLE } = require("./user.model");
 const { USER_PET_TABLE } = require("./user-pet.model");
 
@@ -20,6 +20,7 @@ const PetitionSchema = {
     type: DataTypes.DATEONLY,
     unique: false,
     allowNull: false,
+    defaultValue: Sequelize.NOW,
   },
   acepted: {
     type: DataTypes.BOOLEAN,

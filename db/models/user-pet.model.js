@@ -1,4 +1,4 @@
-const { Model, DataTypes } = require("sequelize");
+const { Model, DataTypes, Sequelize } = require("sequelize");
 const { USER_TABLE } = require("./user.model");
 const { PET_TABLE } = require("./pet.model");
 
@@ -15,6 +15,7 @@ const UserPetSchema = {
     type: DataTypes.DATEONLY,
     unique: false,
     allowNull: false,
+    defaultValue: Sequelize.NOW,
   },
   userId: {
     field: "user_id",

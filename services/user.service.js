@@ -57,6 +57,7 @@ class UserService {
 
   //-----------------------UserPet--------------------
   async newPet(data) {
+
     const myPet = await models.UserPet.create(data);
     return myPet;
   }

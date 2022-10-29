@@ -15,7 +15,7 @@ const { PETITION_TABLE } = require("./../models/petition.model");
 const { SCORE_TABLE } = require("./../models/score.model");
 
 module.exports = {
-  async up (queryInterface) {
+  async up (queryInterface, Sequelize) {
     await queryInterface.createTable(ROLE_TABLE, {
       id: {
         allowNull: false,
@@ -340,6 +340,7 @@ module.exports = {
         type: DataTypes.DATEONLY,
         unique: false,
         allowNull: false,
+        defaultValue: Sequelize.NOW,
       },
       userId: {
         field: "user_id",
@@ -380,6 +381,7 @@ module.exports = {
         type: DataTypes.DATEONLY,
         unique: false,
         allowNull: false,
+        defaultValue: Sequelize.NOW,
       },
       acepted: {
         type: DataTypes.BOOLEAN,

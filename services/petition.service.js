@@ -15,7 +15,7 @@ class PetitionService {
   constructor(){}
 
   async create(data) {
-    const { userId, userPetId, comment, date } = data;
+    const { userId, userPetId, comment } = data;
     const validate = await models.Petition.findAll({where:{userId,userPetId}});
     if (validate.length >= 1){
       throw boom.conflict({message:"Petition already exists."});
@@ -24,6 +24,9 @@ class PetitionService {
     const userPet = await serviceUser.findOneUserPet(userPetId);
     const owner = await serviceUser.findOne(userPet.userId);
     const pet = await servicePet.findOne(userPet.petId);
+    if (userId == owner.dataValues.id) {
+      throw boom.conflict();
+    }
     const mailToAdopter = {
       from: config.email,
       to: `${adopter.email}`,
@@ -33,6 +36,7 @@ class PetitionService {
         <br>Por favor <b>espara hasta nuevo aviso</b>, mientras que el dueño evalúa tu petición.
       </p>`
     }
+    const newPetition = await models.Petition.create(data);
     const mailOwner = {
       from: config.email,
       to: `${owner.email}`,
@@ -45,11 +49,10 @@ class PetitionService {
           <ul>
             <li>Nombre del postulante: ${adopter.name}</li>
             <li>Comentario: ${comment}</li>
-            <li>Fecha: ${date}</li>
+            <li>Fecha: ${newPetition.date}</li>
           </ul>
       </p>`
     }
-    const newPetition = await models.Petition.create(data);
     const resp1 = await serviceAuth.sendMail(mailToAdopter);
     const resp2 = await serviceAuth.sendMail(mailOwner);
     return {
@@ -88,7 +91,7 @@ class PetitionService {
     for (const p of petitions) {
       userPetsPetitions.push(await serviceUser.findOneUserPet(p.userPetId));
       let adopter = await serviceUser.findOne(p.userId);
-      adopters.push({name: adopter.name, email: adopter.email, score: adopter.score, houseSize: adopter.houseSize, urlImage: adopter.urlImage, phoneNumber: adopter.phoneNumber, city: adopter.city.name});
+      adopters.push({name: adopter.name, email: adopter.email, description: adopter.description, houseSize: adopter.houseSize, urlImage: adopter.urlImage, phoneNumber: adopter.phoneNumber, city: adopter.city.name});
     }
     const namePets = [];
     for (const upp of userPetsPetitions) {

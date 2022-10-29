@@ -1,9 +1,11 @@
 const boom = require("@hapi/boom");
 const bcrypt = require("bcrypt");
 const RoleService = require("./role.service");
+//const PetService = require("./pet.service");
 const { models } = require("./../libs/sequelize");
 
-const serviceRole = new RoleService;
+//const servicePet = new PetService();
+const serviceRole = new RoleService();
 
 class UserService {
   constructor(){}
@@ -56,10 +58,10 @@ class UserService {
   }
 
   //-----------------------UserPet--------------------
-  async newPet(data) {
-
-    const myPet = await models.UserPet.create(data);
-    return myPet;
+  async newPet(userId,data) { //primero paso la info de la mascota, dps incorporo la relación con la mascota
+    const newPet = await models.Pet.create(data);
+    const myPet = await models.UserPet.create({userId,petId:newPet.id});
+    return {newPet,myPet};
   }
 
   async findOneUserPet(id) {

@@ -3,7 +3,8 @@ const passport = require("passport");
 
 const UserService = require("./../services/user.service");
 const validatorHandler = require("./../middlewares/validator.handler");
-const { createUserSchema,updateUserSchema,getUserSchema,createNewPetSchema } = require("./../schemas/user.schema");
+const { createUserSchema,updateUserSchema,getUserSchema } = require("./../schemas/user.schema");
+const { createPetSchema } = require("./../schemas/pet.schema");
 const { checkRole } = require("./../middlewares/auth.handler");
 
 const router = express.Router();
@@ -50,12 +51,14 @@ router.post("/",
   }
 );
 
-router.post("/my-pet",
-  validatorHandler(createNewPetSchema, "body"),
+router.post("/my-pet/:id",
+  validatorHandler(getUserSchema, "params"),
+  validatorHandler(createPetSchema, "body"),
   async (req, res, next) => {
     try {
+      const {id} = req.params;
       const body = req.body;
-      const newPet = await service.newPet(body);
+      const newPet = await service.newPet(id,body);
       res.status(201).json(newPet);
     } catch (error) {
       next(error)

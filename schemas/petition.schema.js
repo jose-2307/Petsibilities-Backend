@@ -10,7 +10,7 @@ const userPetId = Joi.number().integer();
 
 const createPetitionSchema = Joi.object({
   comment: comment.required(),
-  date: date.required(),
+  date,
   //userId,
   userPetId: userPetId.required(),
 });

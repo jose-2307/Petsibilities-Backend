@@ -44,11 +44,10 @@ const UserSchema = {
     unique: false,
     allowNull: true,
   },
-  score: {
-    type: DataTypes.INTEGER,
+  description: {
+    type: DataTypes.STRING,
     unique: false,
-    allowNull: false,
-    defaultValue: 5
+    allowNull: true,
   },
   houseSize: {
     field: "hose_size",
@@ -116,6 +115,10 @@ class User extends Model {
       through: models.UserPet,
       foreignKey: "userId",
       otherKey: "petId"
+    });
+    this.hasMany(models.Score, {
+      as: "scores",
+      foreignKey: "userId"
     });
   }
 

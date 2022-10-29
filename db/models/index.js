@@ -9,7 +9,7 @@ const { Pet, PetSchema } = require("./pet.model");
 const { UserPet, UserPetSchema } = require("./user-pet.model");
 const { Image, ImageSchema } = require("./image.model");
 const { Petition, PetitionSchema } = require("./petition.model");
-
+const { Score, ScoreSchema } = require("./score.model");
 
 function setupModels(sequelize) {
   Role.init(RoleSchema, Role.config(sequelize));
@@ -23,6 +23,7 @@ function setupModels(sequelize) {
   UserPet.init(UserPetSchema, UserPet.config(sequelize));
   Image.init(ImageSchema, Image.config(sequelize));
   Petition.init(PetitionSchema, Petition.config(sequelize));
+  Score.init(ScoreSchema, Score.config(sequelize));
 
 
   Role.associate(sequelize.models);
@@ -35,6 +36,7 @@ function setupModels(sequelize) {
   Pet.associate(sequelize.models);
   Image.associate(sequelize.models);
   UserPet.associate(sequelize.models);
+  Score.associate(sequelize.models);
 }
 
 module.exports = setupModels;

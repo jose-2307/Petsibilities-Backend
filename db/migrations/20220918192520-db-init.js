@@ -12,6 +12,7 @@ const { PET_TABLE } = require("./../models/pet.model");
 const { USER_PET_TABLE } = require("./../models/user-pet.model");
 const { IMAGE_TABLE } = require("./../models/image.model");
 const { PETITION_TABLE } = require("./../models/petition.model");
+const { SCORE_TABLE } = require("./../models/score.model");
 
 module.exports = {
   async up (queryInterface) {
@@ -105,11 +106,10 @@ module.exports = {
         unique: false,
         allowNull: true,
       },
-      score: {
-        type: DataTypes.INTEGER,
+      description: {
+        type: DataTypes.STRING,
         unique: false,
-        allowNull: false,
-        defaultValue: 5
+        allowNull: true,
       },
       houseSize: {
         field: "hose_size",
@@ -161,6 +161,30 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "SET NULL"
       },
+    });
+    await queryInterface.createTable(SCORE_TABLE, {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER
+      },
+      score: {
+        type: DataTypes.INTEGER,
+        unique: false,
+        allowNull: false,
+      },
+      userId: {
+        field: "user_id",
+        allowNull: false,
+        type: DataTypes.INTEGER,
+        references: {
+          model: USER_TABLE,
+          key: "id"
+        },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      }
     });
     await queryInterface.createTable(SPECIES_TABLE, {
       id: {
@@ -396,6 +420,7 @@ module.exports = {
     await queryInterface.dropTable(GENDER_TABLE);
     await queryInterface.dropTable(BREED_TABLE);
     await queryInterface.dropTable(SPECIES_TABLE);
+    await queryInterface.dropTable(SCORE_TABLE);
     await queryInterface.dropTable(USER_TABLE);
     await queryInterface.dropTable(CITY_TABLE);
     await queryInterface.dropTable(REGION_TABLE);

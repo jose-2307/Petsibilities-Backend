@@ -7,7 +7,7 @@ const password = Joi.string().alphanum().min(8).max(12);
 const bankAccountNumber = Joi.string().min(8).max(30);
 const bankAccountType = Joi.string().min(4).max(10);
 const bankName = Joi.string().max(30);
-const score = Joi.number().integer().min(1).max(5);
+const description = Joi.string().min(5).max(250);
 const houseSize = Joi.number().integer().min(10);
 const roleId = Joi.number().integer();
 const cityId = Joi.number().integer();
@@ -27,6 +27,7 @@ const createUserSchema = Joi.object({
   bankAccountNumber,
   bankAccountType,
   bankName,
+  description,
   houseSize,
   roleId: roleId.required(),
   cityId: cityId.required(),
@@ -48,7 +49,7 @@ const updateUserSchema = Joi.object({
   bankAccountType,
   bankName,
   houseSize,
-  score,
+  description,
   urlImage,
   phoneNumber
 });

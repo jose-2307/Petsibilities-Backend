@@ -2,10 +2,14 @@ const boom = require("@hapi/boom");
 
 const CityService = require("./city.service");
 const UserService = require("./user.service");
+const SpeciesService = require("./species.service");
+const BreedService = require("./breed.service");
 const { models } = require("./../libs/sequelize");
 
 const serviceCity = new CityService();
 const serviceUser = new UserService();
+const serviceSpecies = new SpeciesService();
+const serviceBreed = new BreedService();
 
 class PetService {
   constructor(){}
@@ -41,6 +45,21 @@ class PetService {
         if(pet.adopted === false && await this.isOwner(u.id,pet.id,false)) {
           pets.push(pet);
         }
+      }
+    }
+    return pets;
+  }
+
+  async findBySpecies(speciesName) {
+    const species = await serviceSpecies.findByName(speciesName);
+    const breeds = [];
+    for(const s of species.breeds){
+      breeds.push(await serviceBreed.findOne(s.id));
+    }
+    const pets = [];
+    for(const b of breeds) {
+      for(const p of b.pets) {
+        pets.push(await this.findOne(p.id));
       }
     }
     return pets;

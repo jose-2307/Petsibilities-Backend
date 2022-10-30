@@ -25,6 +25,17 @@ class SpeciesService {
     return species;
   }
 
+  async findByName(name) {
+    const species = await models.Species.findOne({
+      where: {name},
+      include: ["breeds"],
+    });
+    if(!species) {
+      throw boom.notFound("species not found");
+    }
+    return species;
+  }
+
   async delete(id) {
     const species = await this.findOne(id);
     await species.destroy();

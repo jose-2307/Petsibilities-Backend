@@ -33,6 +33,23 @@ router.get("/filter/commune/:city",
   }
 );
 
+router.get("/filter",
+  //validatorHandler(getPetsByCitySchema, "params"),
+  async (req, res, next) => {
+    try {
+      const { species,city } = req.query;
+      if(!species && !city) res.json(await service.find(false));
+      if(species && !city) res.json(await service.findBySpecies(species));
+      if(!species && city) res.json(await service.findByCity(city));
+      const speciesPets = await service.findBySpecies(species);
+      //buscar las mascotas de speciesPets que son de la ciudad especificada
+      res.json(await service.find(speciesPets));
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 router.get("/:id",
   validatorHandler(getPetSchema, "params"),
   async (req, res, next) => {

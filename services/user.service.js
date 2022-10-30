@@ -1,10 +1,8 @@
 const boom = require("@hapi/boom");
 const bcrypt = require("bcrypt");
 const RoleService = require("./role.service");
-//const PetService = require("./pet.service");
 const { models } = require("./../libs/sequelize");
 
-//const servicePet = new PetService();
 const serviceRole = new RoleService();
 
 class UserService {
@@ -54,11 +52,24 @@ class UserService {
     delete user.dataValues.password;
     delete user.dataValues.roleId;
     delete user.dataValues.cityId;
+
     return user;
   }
 
+  async update(id, changes) {
+    const user = await this.findOne(id);
+    const resp = await user.update(changes);
+    return resp;
+  }
+
+  async delete(id) {
+    const user = await this.findOne(id);
+    await user.destroy();
+    return { id };
+  }
+
   //-----------------------UserPet--------------------
-  async newPet(userId,data) { //primero paso la info de la mascota, dps incorporo la relación con la mascota
+  async newPet(userId,data) {
     const newPet = await models.Pet.create(data);
     const myPet = await models.UserPet.create({userId,petId:newPet.id});
     return {newPet,myPet};
@@ -71,18 +82,25 @@ class UserService {
     }
     return up;
   }
-  //--------------------------------------------------
-  async update(id, changes) {
-    const user = await this.findOne(id);
-    const resp = await user.update(changes);
-    return resp;
+  //-----------------------Score-----------------------
+  async createScore(data,myId) {
+    if (myId == data.userId) {
+      throw boom.conflict("You can't rate yourself.");
+    }
+    const newScore = await models.Score.create(data);
+    return newScore;
   }
 
-  async delete(id) {
-    const user = await this.findOne(id);
-    await user.destroy();
-    return { id };
+  async calculateScore(userId) {
+    const scores = await models.Score.findAll({where:{userId}});
+    let sum = 0;
+    scores.forEach(s => {
+      sum += s.score;
+    });
+    const value = Math.round(sum/scores.length);
+    return value;
   }
+  //---------------------------------------------------
 
 }
 

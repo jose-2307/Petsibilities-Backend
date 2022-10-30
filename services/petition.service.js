@@ -91,7 +91,8 @@ class PetitionService {
     for (const p of petitions) {
       userPetsPetitions.push(await serviceUser.findOneUserPet(p.userPetId));
       let adopter = await serviceUser.findOne(p.userId);
-      adopters.push({name: adopter.name, email: adopter.email, description: adopter.description, houseSize: adopter.houseSize, urlImage: adopter.urlImage, phoneNumber: adopter.phoneNumber, city: adopter.city.name});
+      let score = await serviceUser.calculateScore(adopter.id);
+      adopters.push({name: adopter.name, email: adopter.email, description: adopter.description, houseSize: adopter.houseSize, urlImage: adopter.urlImage, phoneNumber: adopter.phoneNumber, city: adopter.city.name, score: score});
     }
     const namePets = [];
     for (const upp of userPetsPetitions) {

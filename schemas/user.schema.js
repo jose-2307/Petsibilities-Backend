@@ -14,6 +14,9 @@ const cityId = Joi.number().integer();
 const urlImage = Joi.string().alphanum();
 const phoneNumber = Joi.string().min(12).max(12);
 
+//score
+const score = Joi.number().integer().min(1).max(5);
+
 
 //user-pet
 const userId = Joi.number().integer();
@@ -41,6 +44,11 @@ const createNewPetSchema = Joi.object({
   petId: petId.required()
 });
 
+const createScoreSchema = Joi.object({
+  score: score.required(),
+  userId: userId.required()
+});
+
 const updateUserSchema = Joi.object({
   name,
   email,
@@ -58,4 +66,4 @@ const getUserSchema = Joi.object({
   id: id.required()
 });
 
-module.exports = { createUserSchema, updateUserSchema, getUserSchema, createNewPetSchema }
+module.exports = { createUserSchema, updateUserSchema, getUserSchema, createNewPetSchema, createScoreSchema }

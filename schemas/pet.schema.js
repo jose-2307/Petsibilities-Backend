@@ -24,7 +24,6 @@ const createPetSchema = Joi.object({
   genderId: genderId.required(),
   breedId: breedId.required()
 });
-
 const updatePetSchema = Joi.object({
   name,
   description,

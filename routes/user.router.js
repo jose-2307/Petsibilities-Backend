@@ -3,7 +3,7 @@ const passport = require("passport");
 
 const UserService = require("./../services/user.service");
 const validatorHandler = require("./../middlewares/validator.handler");
-const { createUserSchema,updateUserSchema,getUserSchema } = require("./../schemas/user.schema");
+const { createUserSchema,updateUserSchema,getUserSchema,createScoreSchema } = require("./../schemas/user.schema");
 const { createPetSchema } = require("./../schemas/pet.schema");
 const { checkRole } = require("./../middlewares/auth.handler");
 
@@ -60,6 +60,34 @@ router.post("/my-pet/:id",
       const body = req.body;
       const newPet = await service.newPet(id,body);
       res.status(201).json(newPet);
+    } catch (error) {
+      next(error)
+    }
+  }
+);
+
+router.post("/score/:id",
+  validatorHandler(getUserSchema, "params"),
+  validatorHandler(createScoreSchema, "body"),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const body = req.body;
+      const newScore = await service.createScore(body,id);
+      res.status(201).json(newScore);
+    } catch (error) {
+      next(error)
+    }
+  }
+);
+
+router.get("/score/:id",
+  validatorHandler(getUserSchema, "params"),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const score = await service.calculateScore(id);
+      res.json(score);
     } catch (error) {
       next(error)
     }

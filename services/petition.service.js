@@ -18,14 +18,14 @@ class PetitionService {
     const { userId, userPetId, comment } = data;
     const validate = await models.Petition.findAll({where:{userId,userPetId}});
     if (validate.length >= 1){
-      throw boom.conflict({message:"Petition already exists."});
+      throw boom.conflict("Petition already exists.");
     }
     const adopter = await serviceUser.findOne(userId);
     const userPet = await serviceUser.findOneUserPet(userPetId);
     const owner = await serviceUser.findOne(userPet.userId);
     const pet = await servicePet.findOne(userPet.petId);
     if (userId == owner.dataValues.id) {
-      throw boom.conflict();
+      throw boom.conflict("You cannot apply for your own pet.");
     }
     const mailToAdopter = {
       from: config.email,

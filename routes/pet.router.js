@@ -33,17 +33,18 @@ router.get("/filter/commune/:city",
   }
 );
 
-router.get("/filter",
+router.get("/filter", //City => Species => Breeds => Gender
   //validatorHandler(getPetsByCitySchema, "params"),
   async (req, res, next) => {
     try {
-      const { species,city } = req.query;
-      if(!species && !city) res.json(await service.find(false));
-      if(species && !city) res.json(await service.findBySpecies(species));
-      if(!species && city) res.json(await service.findByCity(city));
-      const speciesPets = await service.findBySpecies(species);
-      //buscar las mascotas de speciesPets que son de la ciudad especificada
-      res.json(await service.find(speciesPets));
+      const { species,city,breed,gender } = req.query;
+      if(!species && !city && !breed && !gender) res.json(await service.find(false));
+      if(species && !city && !breed && !gender) res.json(await service.findBySpecies(species));
+      if(!species && city && !breed && !gender) res.json(await service.findByCity(city));
+      if(!species && !city && !breed && gender) res.json(await service.findByGender(gender));
+      //const speciesPets = await service.findBySpecies(species);
+      //buscar las mascotas de speciesPets que son de la ciudad especificada. Podría ser con una función que reciba todos los parámetros y llame al resto de funciones específicas para devolver el filtro completo
+      res.json(await service.filter(city,species,breed,gender));
     } catch (error) {
       next(error);
     }

@@ -25,6 +25,17 @@ class GenderService {
     return gender;
   }
 
+  async findByName(name) {
+    const gender = await models.Gender.findOne({
+      where: {name},
+      include: ["pets"],
+    });
+    if(!gender) {
+      throw boom.notFound("gender not found");
+    }
+    return gender;
+  }
+
   async delete(id) {
     const gender = await this.findOne(id);
     await gender.destroy();

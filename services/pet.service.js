@@ -4,12 +4,14 @@ const CityService = require("./city.service");
 const UserService = require("./user.service");
 const SpeciesService = require("./species.service");
 const BreedService = require("./breed.service");
+const GenderService = require("./gender.service");
 const { models } = require("./../libs/sequelize");
 
 const serviceCity = new CityService();
 const serviceUser = new UserService();
 const serviceSpecies = new SpeciesService();
 const serviceBreed = new BreedService();
+const serviceGender = new GenderService();
 
 class PetService {
   constructor(){}
@@ -50,7 +52,7 @@ class PetService {
     return pets;
   }
 
-  async findBySpecies(speciesName) {
+  async findBySpecies(speciesName,petsArray) {
     const species = await serviceSpecies.findByName(speciesName);
     const breeds = [];
     for(const s of species.breeds){
@@ -62,7 +64,93 @@ class PetService {
         pets.push(await this.findOne(p.id));
       }
     }
+    if (petsArray !== undefined) {
+      for (let i = 0; i < pets.length; i ++) {
+        if (petsArray.includes(pets[i].id) === false) {
+          pets.splice(i,1);
+        }
+      }
+    }
     return pets;
+  }
+
+  async findByGender(genderName,petsArray) {
+    const gender = await serviceGender.findByName(genderName);
+    const pets = [];
+    for(const p of gender.pets) {
+      pets.push(await this.findOne(p.id));
+    }
+    if (petsArray !== undefined) {
+      for (let i = 0; i < pets.length; i ++) {
+        if (petsArray.includes(pets[i].id) === false) {
+          pets.splice(i,1);
+        }
+      }
+    }
+    return pets;
+  }
+
+  async filter(city,species,breed,gender) {
+    if (city === undefined && species === undefined) {
+      //breed y gender
+    }
+    if (city === undefined && breed === undefined) {
+      //species y gender
+      const speciesPets = await this.findBySpecies(species);
+      const array = speciesPets.map(sp => {
+        return sp.id;
+      });
+      const genderPets = await this.findByGender(gender,array);
+      return genderPets;
+    }
+    if (city === undefined && gender === undefined) {
+      //species y breed
+    }
+    if (species === undefined && breed === undefined) {
+      //city y gender
+      const cityPets = await this.findByCity(city);
+      const array = cityPets.map(cp => {
+        return cp.id;
+      });
+      const genderPets = await this.findByGender(gender,array);
+      return genderPets;
+    }
+    if (species === undefined && gender === undefined) {
+      //city breed
+    }
+    if (breed === undefined && gender === undefined) {
+      //city y species
+      const cityPets = await this.findByCity(city);
+      const array = cityPets.map(cp => {
+        return cp.id;
+      });
+      const speciesPets = await this.findBySpecies(species,array);
+      return speciesPets;
+
+    }
+    if (city === undefined) {
+      //species, breed y gender
+    }
+    if (species === undefined) {
+      //city, breed y gender
+    }
+    if (breed === undefined) {
+      //city, species y gender
+      const cityPets = await this.findByCity(city);
+      const array = cityPets.map(cp => {
+        return cp.id;
+      });
+      const speciesPets = await this.findBySpecies(species,array);
+      const array2 = speciesPets.map(sp => {
+        return sp.id;
+      });
+      const genderPets = await this.findByGender(gender,array2);
+      return genderPets;
+    }
+    if (gender === undefined) {
+      //city, species y breed
+    }
+    //todo
   }
 
   async findOne(id) {

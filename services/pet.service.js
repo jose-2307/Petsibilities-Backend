@@ -58,20 +58,25 @@ class PetService {
     for(const s of species.breeds){
       breeds.push(await serviceBreed.findOne(s.id));
     }
-    const pets = [];
+    let pets = [];
     for(const b of breeds) {
       for(const p of b.pets) {
         pets.push(await this.findOne(p.id));
       }
     }
     if (petsArray !== undefined) {
-      for (let i = 0; i < pets.length; i ++) {
-        if (petsArray.includes(pets[i].id) === false) {
-          pets.splice(i,1);
-        }
-      }
+      this.deleteInvalid(pets,petsArray);
     }
     return pets;
+  }
+
+  deleteInvalid(pets,petsArray){
+    for (let i = 0; i < pets.length; i ++) {
+      if (petsArray.includes(pets[i].id) === false) {
+        pets.splice(i,1);
+        i--;
+      }
+    }//return pets;
   }
 
   async findByGender(genderName,petsArray) {
@@ -81,11 +86,7 @@ class PetService {
       pets.push(await this.findOne(p.id));
     }
     if (petsArray !== undefined) {
-      for (let i = 0; i < pets.length; i ++) {
-        if (petsArray.includes(pets[i].id) === false) {
-          pets.splice(i,1);
-        }
-      }
+      this.deleteInvalid(pets,petsArray);
     }
     return pets;
   }

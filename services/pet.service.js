@@ -61,7 +61,7 @@ class PetService {
     let pets = [];
     for(const b of breeds) {
       for(const p of b.pets) {
-        pets.push(await this.findOne(p.id));
+        if(p.adopted === false) pets.push(await this.findOne(p.id));
       }
     }
     if (petsArray !== undefined) {
@@ -83,7 +83,7 @@ class PetService {
     const gender = await serviceGender.findByName(genderName);
     const pets = [];
     for(const p of gender.pets) {
-      pets.push(await this.findOne(p.id));
+      if(p.adopted === false) pets.push(await this.findOne(p.id));
     }
     if (petsArray !== undefined) {
       this.deleteInvalid(pets,petsArray);

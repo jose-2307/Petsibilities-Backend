@@ -42,8 +42,6 @@ router.get("/filter", //City => Species => Breeds => Gender
       if(species && !city && !breed && !gender) res.json(await service.findBySpecies(species));
       if(!species && city && !breed && !gender) res.json(await service.findByCity(city));
       if(!species && !city && !breed && gender) res.json(await service.findByGender(gender));
-      //const speciesPets = await service.findBySpecies(species);
-      //buscar las mascotas de speciesPets que son de la ciudad especificada. Podría ser con una función que reciba todos los parámetros y llame al resto de funciones específicas para devolver el filtro completo
       res.json(await service.filter(city,species,breed,gender));
     } catch (error) {
       next(error);

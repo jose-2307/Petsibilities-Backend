@@ -32,12 +32,21 @@ class PetService {
     return pets;
   }
 
+  deleteInvalid(pets,petsArray){
+    for (let i = 0; i < pets.length; i ++) {
+      if (petsArray.includes(pets[i].id) === false) {
+        pets.splice(i,1);
+        i--;
+      }
+    }
+  }
+
   async findByCity(cityName) {
     const city = await serviceCity.findByName(cityName);
     delete city.dataValues.name;
     delete city.dataValues.regionId;
     delete city.dataValues.id;
-    const users = []; //[user1[pet1,pet2],user2[pet3,...,pet1],...]
+    const users = [];
     for(const user of city.users){
       users.push(await serviceUser.findOne(user.id));
     }
@@ -52,31 +61,29 @@ class PetService {
     return pets;
   }
 
-  async findBySpecies(speciesName,petsArray) {
+  async findBySpecies(speciesName,petsArray,breedName) {
+    if(!speciesName) throw boom.badRequest();
     const species = await serviceSpecies.findByName(speciesName);
     const breeds = [];
+    let pets = [];
+    if(breedName !== undefined ) {
+      const breed = await serviceBreed.findByName(breedName);
+      for(const p of breed.pets) {
+        if(p.adopted === false) pets.push(await this.findOne(p.id));
+      }
+      if (petsArray !== undefined && petsArray !== 0) this.deleteInvalid(pets,petsArray);
+      return pets;
+    }
     for(const s of species.breeds){
       breeds.push(await serviceBreed.findOne(s.id));
     }
-    let pets = [];
     for(const b of breeds) {
       for(const p of b.pets) {
         if(p.adopted === false) pets.push(await this.findOne(p.id));
       }
     }
-    if (petsArray !== undefined) {
-      this.deleteInvalid(pets,petsArray);
-    }
+    if (petsArray !== undefined) this.deleteInvalid(pets,petsArray);
     return pets;
-  }
-
-  deleteInvalid(pets,petsArray){
-    for (let i = 0; i < pets.length; i ++) {
-      if (petsArray.includes(pets[i].id) === false) {
-        pets.splice(i,1);
-        i--;
-      }
-    }//return pets;
   }
 
   async findByGender(genderName,petsArray) {
@@ -91,10 +98,8 @@ class PetService {
     return pets;
   }
 
+
   async filter(city,species,breed,gender) {
-    if (city === undefined && species === undefined) {
-      //breed y gender
-    }
     if (city === undefined && breed === undefined) {
       //species y gender
       const speciesPets = await this.findBySpecies(species);
@@ -106,6 +111,8 @@ class PetService {
     }
     if (city === undefined && gender === undefined) {
       //species y breed
+      const speciesPets = await this.findBySpecies(species,0,breed);
+      return speciesPets;
     }
     if (species === undefined && breed === undefined) {
       //city y gender
@@ -116,9 +123,6 @@ class PetService {
       const genderPets = await this.findByGender(gender,array);
       return genderPets;
     }
-    if (species === undefined && gender === undefined) {
-      //city breed
-    }
     if (breed === undefined && gender === undefined) {
       //city y species
       const cityPets = await this.findByCity(city);
@@ -127,13 +131,15 @@ class PetService {
       });
       const speciesPets = await this.findBySpecies(species,array);
       return speciesPets;
-
     }
     if (city === undefined) {
       //species, breed y gender
-    }
-    if (species === undefined) {
-      //city, breed y gender
+      const speciesPets = await this.findBySpecies(species,0,breed);
+      const array = speciesPets.map(sp => {
+        return sp.id;
+      });
+      const genderPets = await this.findByGender(gender,array);
+      return genderPets;
     }
     if (breed === undefined) {
       //city, species y gender
@@ -150,8 +156,24 @@ class PetService {
     }
     if (gender === undefined) {
       //city, species y breed
+      const cityPets = await this.findByCity(city);
+      const array = cityPets.map(cp => {
+        return cp.id;
+      });
+      const speciesPets = await this.findBySpecies(species,array,breed);
+      return speciesPets;
     }
     //todo
+    const cityPets = await this.findByCity(city);
+    const array = cityPets.map(cp => {
+      return cp.id;
+    });
+    const speciesPets = await this.findBySpecies(species,array,breed);
+    const array2 = speciesPets.map(sp => {
+      return sp.id;
+    });
+    const genderPets = await this.findByGender(gender,array2);
+    return genderPets;
   }
 
   async findOne(id) {

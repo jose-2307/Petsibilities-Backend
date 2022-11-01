@@ -3,13 +3,16 @@ const passport = require("passport");
 
 const PetService = require("./../services/pet.service");
 const validatorHandler = require("./../middlewares/validator.handler");
-const { createPetSchema,updatePetSchema,getPetSchema,getPetsByCitySchema } = require("./../schemas/pet.schema");
+const { createPetSchema,updatePetSchema,getPetSchema } = require("./../schemas/pet.schema");
 const { checkRole } = require("./../middlewares/auth.handler");
 
 const router = express.Router();
 const service = new PetService();
 
+//solo para admin
 router.get("/",
+  // passport.authenticate("jwt",{session: false}),
+  // checkRole("Admin"),
   async (req, res, next) => {
     try {
       const { available } = req.query;
@@ -21,24 +24,23 @@ router.get("/",
   }
 );
 
-router.get("/filter/commune/:city",
-  validatorHandler(getPetsByCitySchema, "params"),
-  async (req, res, next) => {
-    try {
-      const { city } = req.params;
-      res.json(await service.findByCity(city));
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+// router.get("/filter/commune/:city",
+//   validatorHandler(getPetsByCitySchema, "params"),
+//   async (req, res, next) => {
+//     try {
+//       const { city } = req.params;
+//       res.json(await service.findByCity(city));
+//     } catch (error) {
+//       next(error);
+//     }
+//   }
+// );
 
 router.get("/filter", //City => Species => Breeds => Gender
-  //validatorHandler(getPetsByCitySchema, "params"),
   async (req, res, next) => {
     try {
       const { species,city,breed,gender } = req.query;
-      if(!species && !city && !breed && !gender) res.json(await service.find(false));
+      if(!species && !city && !breed && !gender) res.json(await service.find(true));
       if(species && !city && !breed && !gender) res.json(await service.findBySpecies(species));
       if(!species && city && !breed && !gender) res.json(await service.findByCity(city));
       if(!species && !city && !breed && gender) res.json(await service.findByGender(gender));

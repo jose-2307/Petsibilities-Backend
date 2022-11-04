@@ -45,7 +45,6 @@ router.patch("/personal-information",
   }
 );
 
-
 router.post("/my-pet",
   passport.authenticate("jwt", {session: false}),
   validatorHandler(createPetSchema, "body"),
@@ -61,7 +60,7 @@ router.post("/my-pet",
   }
 );
 
-router.patch("/:id",
+router.patch("/my-pet/:id",
   passport.authenticate("jwt",{session: false}),
   validatorHandler(getPetSchema, "params"),
   validatorHandler(updatePetSchema, "body"),
@@ -79,7 +78,7 @@ router.patch("/:id",
   }
 );
 
-router.delete("/:id",
+router.delete("/my-pet/:id",
   passport.authenticate("jwt",{session: false}),
   validatorHandler(getPetSchema, "params"),
   async (req, res, next) => {
@@ -122,7 +121,6 @@ router.get("/score",
     }
   }
 );
-
 
 router.post("/petition",
   passport.authenticate("jwt", {session: false}),

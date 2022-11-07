@@ -31,10 +31,10 @@ class AuthService {
       role: user.role.name,
     };
     const accessToken = jwt.sign(payload, config.jwtSecretLogin, {
-      expiresIn: '20s',
+      expiresIn: "3min",
     });
     const refreshToken = jwt.sign(payload, config.jwtSecretRefresh, {
-      expiresIn: '90min',
+      expiresIn: "90min",
     });
     await serviceUser.update(user.id, { refreshToken: refreshToken });
 
@@ -55,7 +55,7 @@ class AuthService {
       const accessToken = jwt.sign(
         { sub: payloadRefresh.sub, role: payloadRefresh.role },
         config.jwtSecretLogin,
-        { expiresIn: '20s' }
+        { expiresIn: "3min" }
       );
       return {
         accessToken,
@@ -75,7 +75,7 @@ class AuthService {
       }
       await serviceUser.update(user.id, { refreshToken: null });
       return {
-        message: 'Log out',
+        message: "Log out",
       };
     } catch (error) {
       throw boom.unauthorized();

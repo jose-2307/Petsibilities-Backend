@@ -24,12 +24,21 @@ class PetService {
   async find(available) {
     if (!available) {
       const pets = await models.Pet.findAll();
+      await this.petImages(pets);
       return pets;
     }
     const pets = await models.Pet.findAll({
       where: {adopted: false}
     });
+    await this.petImages(pets);
     return pets;
+  }
+
+  async petImages(petArray) {
+    for(const pet of petArray) {
+      let p = await this.findOne(pet.id);
+      pet.dataValues.images = p.images;
+    }
   }
 
   deleteInvalid(pets,petsArray){

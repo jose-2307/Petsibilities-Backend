@@ -34,13 +34,20 @@ class UserService {
   }
 
   async findOne(id) {
-    const user = await models.User.findByPk(id, {
+    let user = await models.User.findByPk(id, {
       include: ["role","city","myPet"]
     });
     if(!user) {
       throw boom.notFound("user not found");
     }
+    await this.petImages(user.myPet);
     const role = await serviceRole.findOne(user.roleId);
+    this.deleteProperty(user,role);
+
+    return user;
+  }
+
+  deleteProperty(user, role){
     if (role.name === "Individual") {
       delete user.dataValues.bankAccountNumber;
       delete user.dataValues.bankAccountType;
@@ -52,8 +59,15 @@ class UserService {
     delete user.dataValues.password;
     delete user.dataValues.roleId;
     delete user.dataValues.cityId;
+  }
 
-    return user;
+  async petImages(petArray){
+    for (const pet of petArray) {
+      let mypet = await models.Pet.findByPk(pet.id, {
+        include: ["images"]
+      });
+      pet.dataValues.images = mypet.images;
+    }
   }
 
   async update(id, changes) {

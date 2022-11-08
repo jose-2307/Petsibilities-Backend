@@ -51,8 +51,10 @@ router.post("/my-pet",
   async (req, res, next) => {
     try {
       const user = req.user;
+      const { images } = req.body;
       const body = req.body;
-      const newPet = await serviceUser.newPet(user.sub,body);
+      delete body.images;
+      const newPet = await serviceUser.newPet(user.sub,body,images);
       res.status(201).json(newPet);
     } catch (error) {
       next(error)

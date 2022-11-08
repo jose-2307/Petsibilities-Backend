@@ -12,6 +12,7 @@ const genderId = Joi.number().integer();
 const breedId = Joi.number().integer();
 const userId = Joi.number().integer();
 
+const images = Joi.array().items(Joi.string()).min(1).max(5);
 
 const createPetSchema = Joi.object({
   name: name.required(),
@@ -21,7 +22,8 @@ const createPetSchema = Joi.object({
   wormed: wormed.required(),
   sterilized: sterilized.required(),
   genderId: genderId.required(),
-  breedId: breedId.required()
+  breedId: breedId.required(),
+  images: images.required()
 });
 const updatePetSchema = Joi.object({
   name,

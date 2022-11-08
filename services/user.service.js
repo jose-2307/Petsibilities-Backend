@@ -83,9 +83,12 @@ class UserService {
   }
 
   //-----------------------UserPet--------------------
-  async newPet(userId,data) {
+  async newPet(userId,data,urls) {
     const newPet = await models.Pet.create(data);
     const myPet = await models.UserPet.create({userId,petId:newPet.id});
+    for(const url of urls) {
+      await models.Image.create({url,petId:newPet.id});
+    }
     return {newPet,myPet};
   }
 

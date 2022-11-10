@@ -2,12 +2,14 @@ const express = require("express");
 const passport = require("passport");
 
 const PetService = require("./../services/pet.service");
+const UserService = require("./../services/user.service");
 const validatorHandler = require("./../middlewares/validator.handler");
 const { createPetSchema,updatePetSchema,getPetSchema } = require("./../schemas/pet.schema");
 const { checkRole } = require("./../middlewares/auth.handler");
 
 const router = express.Router();
 const service = new PetService();
+const serviceUser = new UserService();
 
 //solo para admin
 router.get("/",
@@ -52,12 +54,16 @@ router.get("/filter", //City => Species => Breeds => Gender
 );
 
 router.get("/:id",
+  // passport.authenticate("jwt",{session: false}),
+  // checkRole("Admin","Individual","Organization"),
   validatorHandler(getPetSchema, "params"),
   async (req, res, next) => {
     try {
       const { id } = req.params;
       const pet = await service.findOne(id);
-      res.json(pet);
+      const owner = await service.owner(id);
+      const score = await serviceUser.calculateScore(owner.id);
+      res.json({pet,owner,score});
     } catch (error) {
       next(error);
     }

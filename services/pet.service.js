@@ -219,6 +219,8 @@ class PetService {
     usersPet.sort((a,b) => b.dataValues.id - a.dataValues.id);
     const ownerId = usersPet[0].dataValues.userId;
     const user = await serviceUser.findOne(ownerId);
+    delete user.dataValues.recoveryToken;
+    delete user.dataValues.myPet;
     return user;
   }
 

@@ -24,6 +24,16 @@ class RegionService {
     }
     return region;
   }
+  async findByName(name) {
+    const region = await models.Region.findOne({
+      where: {name},
+      include: ["cities"],
+    });
+    if(!region) {
+      throw boom.notFound("region not found");
+    }
+    return region;
+  }
 
   async delete(id) {
     const region = await this.findOne(id);

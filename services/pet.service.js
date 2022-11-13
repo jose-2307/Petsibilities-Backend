@@ -1,5 +1,6 @@
 const boom = require("@hapi/boom");
 
+const RegionService = require("./region.service");
 const CityService = require("./city.service");
 const UserService = require("./user.service");
 const SpeciesService = require("./species.service");
@@ -7,6 +8,7 @@ const BreedService = require("./breed.service");
 const GenderService = require("./gender.service");
 const { models } = require("./../libs/sequelize");
 
+const serviceRegion = new RegionService();
 const serviceCity = new CityService();
 const serviceUser = new UserService();
 const serviceSpecies = new SpeciesService();
@@ -48,6 +50,31 @@ class PetService {
         i--;
       }
     }
+  }
+
+  async findByRegion(regionName) {
+    const region = await serviceRegion.findByName(regionName);
+    delete region.dataValues.name;
+    delete region.dataValues.id;
+    const cities = [];
+    for(const city of region.cities) {
+      cities.push(await serviceCity.findOne(city.id));
+    }
+    const users = [];
+    for (const city of cities) {
+      for(const user of city.users){
+        users.push(await serviceUser.findOne(user.id));
+      }
+    }
+    let pets = [];
+    for(const u of users){
+      for(const pet of u.myPet){
+        if(pet.adopted === false && await this.isOwner(u.id,pet.id,false)) {
+          pets.push(pet);
+        }
+      }
+    }
+    return pets;
   }
 
   async findByCity(cityName) {

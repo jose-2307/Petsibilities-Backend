@@ -213,11 +213,16 @@ class PetService {
   }
 
   async findOne(id) {
-    const pet = await models.Pet.findByPk(id, {
+    let pet = await models.Pet.findByPk(id, {
       include: ["breed","gender","images"]
     });
     if(!pet) {
       throw boom.notFound("pet not found");
+    }
+    const relationshipId = await this.findUserPetId(pet.id);
+    pet = {
+      ...pet,
+      userPetId: relationshipId
     }
     return pet;
   }
@@ -237,7 +242,7 @@ class PetService {
     return isMatch;
   }
 
-  async owner(petId) { //sin probar
+  async owner(petId) {
     const usersPet = await models.UserPet.findAll({
       where: {
         petId
@@ -249,6 +254,19 @@ class PetService {
     delete user.dataValues.recoveryToken;
     delete user.dataValues.myPet;
     return user;
+  }
+
+  async findUserPetId(petId) {
+    const owner = await this.owner(petId);
+    const usersPet = await models.UserPet.findAll({
+      where: {
+        petId,
+        userId: owner.id
+      }
+    });
+    usersPet.sort((a,b) => b.dataValues.id - a.dataValues.id);
+    const relationshipId = usersPet[0].dataValues.id;
+    return relationshipId;
   }
 
   async update(id, changes) {

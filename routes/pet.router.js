@@ -38,11 +38,12 @@ router.get("/",
 //   }
 // );
 
-router.get("/filter", //City => Species => Breeds => Gender
+router.get("/filter", //Region => City => Species => Breeds => Gender
   async (req, res, next) => {
     try {
-      const { species,city,breed,gender } = req.query;
-      if(!species && !city && !breed && !gender) res.json(await service.find(true));
+      const { species,region,city,breed,gender } = req.query;
+      if(region) res.json(await service.findByRegion(region)); //hacer lo mismo que species y breed
+      if(!species && !region && !city && !breed && !gender) res.json(await service.find(true));
       if(species && !city && !breed && !gender) res.json(await service.findBySpecies(species));
       if(!species && city && !breed && !gender) res.json(await service.findByCity(city));
       if(!species && !city && !breed && gender) res.json(await service.findByGender(gender));

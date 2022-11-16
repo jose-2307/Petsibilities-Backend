@@ -5,6 +5,7 @@ const { models } = require("./../libs/sequelize");
 const AuthService = require("./auth.service");
 const UserService = require("./user.service");
 const PetService = require("./pet.service");
+const {pagination} = require("../utils/functions");
 
 
 const serviceAuth = new AuthService();
@@ -62,7 +63,7 @@ class PetitionService {
     }
   }
 
-  async findSent(userId) {
+  async findSent(userId,limit,offset) {
     const petitions = await models.Petition.findAll({where:{userId}});
     const userPets = [];
     const pets = [];
@@ -72,10 +73,11 @@ class PetitionService {
     for (const up of userPets) {
       pets.push(await servicePet.findOne(up.petId));
     }
-    const petitionsPets = [];
-    for (let i = 0; i <petitions.length; i++) {
+    let petitionsPets = [];
+    for (let i = 0; i < petitions.length; i++) {
       petitionsPets.push({petition:petitions[i],pet:pets[i]});
     }
+    if (limit && offset) petitionsPets = pagination(limit,offset,petitionsPets);
     return {petitionsPets};
   }
 

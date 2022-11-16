@@ -52,10 +52,14 @@ class PetService {
     }
   }
 
-  async findByRegion(regionName) {
+  async findByRegion(regionName, cityName) {
     const region = await serviceRegion.findByName(regionName);
     delete region.dataValues.name;
     delete region.dataValues.id;
+    if(cityName !== undefined ) {
+      const resp = await this.findByCity(cityName);
+      return resp;
+    }
     const cities = [];
     for(const city of region.cities) {
       cities.push(await serviceCity.findOne(city.id));
@@ -135,8 +139,8 @@ class PetService {
   }
 
 
-  async filter(city,species,breed,gender) {
-    if (city === undefined && breed === undefined) {
+  async filter(region,city,species,breed,gender) {
+    if (region == undefined && city === undefined && breed === undefined) {
       //species y gender
       const speciesPets = await this.findBySpecies(species);
       const array = speciesPets.map(sp => {
@@ -145,30 +149,35 @@ class PetService {
       const genderPets = await this.findByGender(gender,array);
       return genderPets;
     }
-    if (city === undefined && gender === undefined) {
+    if (region == undefined && city === undefined && gender === undefined) {
       //species y breed
       const speciesPets = await this.findBySpecies(species,0,breed);
       return speciesPets;
     }
+    if (species === undefined && breed === undefined && gender === undefined) {
+      //region y city
+      const regionPets = await this.findByRegion(region,city);
+      return regionPets;
+    }
     if (species === undefined && breed === undefined) {
-      //city y gender
-      const cityPets = await this.findByCity(city);
-      const array = cityPets.map(cp => {
-        return cp.id;
+      //region, city y gender
+      const regionPets = await this.findByRegion(region,city);
+      const array = regionPets.map(rp => {
+        return rp.id;
       });
       const genderPets = await this.findByGender(gender,array);
       return genderPets;
     }
     if (breed === undefined && gender === undefined) {
-      //city y species
-      const cityPets = await this.findByCity(city);
-      const array = cityPets.map(cp => {
-        return cp.id;
+      //region, city y species
+      const regionPets = await this.findByRegion(region,city);
+      const array = regionPets.map(rp => {
+        return rp.id;
       });
       const speciesPets = await this.findBySpecies(species,array);
       return speciesPets;
     }
-    if (city === undefined) {
+    if (region == undefined && city === undefined) {
       //species, breed y gender
       const speciesPets = await this.findBySpecies(species,0,breed);
       const array = speciesPets.map(sp => {
@@ -178,10 +187,10 @@ class PetService {
       return genderPets;
     }
     if (breed === undefined) {
-      //city, species y gender
-      const cityPets = await this.findByCity(city);
-      const array = cityPets.map(cp => {
-        return cp.id;
+      //region, city, species y gender
+      const regionPets = await this.findByRegion(region,city);
+      const array = regionPets.map(rp => {
+        return rp.id;
       });
       const speciesPets = await this.findBySpecies(species,array);
       const array2 = speciesPets.map(sp => {
@@ -191,18 +200,18 @@ class PetService {
       return genderPets;
     }
     if (gender === undefined) {
-      //city, species y breed
-      const cityPets = await this.findByCity(city);
-      const array = cityPets.map(cp => {
-        return cp.id;
+      //region, city, species y breed
+      const regionPets = await this.findByRegion(region,city);
+      const array = regionPets.map(rp => {
+        return rp.id;
       });
       const speciesPets = await this.findBySpecies(species,array,breed);
       return speciesPets;
     }
     //todo
-    const cityPets = await this.findByCity(city);
-    const array = cityPets.map(cp => {
-      return cp.id;
+    const regionPets = await this.findByRegion(region,city);
+    const array = regionPets.map(rp => {
+      return rp.id;
     });
     const speciesPets = await this.findBySpecies(species,array,breed);
     const array2 = speciesPets.map(sp => {
@@ -218,11 +227,6 @@ class PetService {
     });
     if(!pet) {
       throw boom.notFound("pet not found");
-    }
-    const relationshipId = await this.findUserPetId(pet.id);
-    pet = {
-      ...pet,
-      userPetId: relationshipId
     }
     return pet;
   }

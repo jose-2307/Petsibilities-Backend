@@ -26,28 +26,16 @@ router.get("/",
   }
 );
 
-// router.get("/filter/commune/:city",
-//   validatorHandler(getPetsByCitySchema, "params"),
-//   async (req, res, next) => {
-//     try {
-//       const { city } = req.params;
-//       res.json(await service.findByCity(city));
-//     } catch (error) {
-//       next(error);
-//     }
-//   }
-// );
 
 router.get("/filter", //Region => City => Species => Breeds => Gender
   async (req, res, next) => {
     try {
       const { species,region,city,breed,gender } = req.query;
-      if(region) res.json(await service.findByRegion(region)); //hacer lo mismo que species y breed
       if(!species && !region && !city && !breed && !gender) res.json(await service.find(true));
-      if(species && !city && !breed && !gender) res.json(await service.findBySpecies(species));
-      if(!species && city && !breed && !gender) res.json(await service.findByCity(city));
-      if(!species && !city && !breed && gender) res.json(await service.findByGender(gender));
-      res.json(await service.filter(city,species,breed,gender));
+      if(species && !region && !city && !breed && !gender) res.json(await service.findBySpecies(species));
+      if(!species && region && !city && !breed && !gender) res.json(await service.findByRegion(region));
+      if(!species && !region && !city && !breed && gender) res.json(await service.findByGender(gender));
+      res.json(await service.filter(region,city,species,breed,gender));
     } catch (error) {
       next(error);
     }
@@ -64,7 +52,8 @@ router.get("/:id",
       const pet = await service.findOne(id);
       const owner = await service.owner(id);
       const score = await serviceUser.calculateScore(owner.id);
-      res.json({pet,owner,score});
+      const userPetId = await service.findUserPetId(id);
+      res.json({pet,userPetId,owner,score});
     } catch (error) {
       next(error);
     }

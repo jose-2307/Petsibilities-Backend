@@ -77,11 +77,11 @@ class PetitionService {
     for (let i = 0; i < petitions.length; i++) {
       petitionsPets.push({petition:petitions[i],pet:pets[i]});
     }
-    if (limit && offset) petitionsPets = pagination(limit,offset,petitionsPets);
+    if (limit != undefined && offset != undefined) petitionsPets = pagination(limit,offset,petitionsPets);
     return {petitionsPets};
   }
 
-  async findReceived(userId) {
+  async findReceived(userId,limit,offset) {
     const userPets = await models.UserPet.findAll({where:{userId}});
     let petitions = [];
     for (const up of userPets){
@@ -101,10 +101,11 @@ class PetitionService {
       let pet = await servicePet.findOne(upp.petId);
       namePets.push({name:pet.name,images:pet.images});
     }
-    const petitionsDetails = [];
+    let petitionsDetails = [];
     for (let i = 0; i <petitions.length; i++) {
       petitionsDetails.push({petition:petitions[i],pet:namePets[i],adopter:adopters[i]});
     }
+    if (limit != undefined && offset != undefined) petitionsDetails = pagination(limit,offset,petitionsDetails);
     return {petitionsDetails};
   }
 

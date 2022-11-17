@@ -7,6 +7,7 @@ const SpeciesService = require("./species.service");
 const BreedService = require("./breed.service");
 const GenderService = require("./gender.service");
 const { models } = require("./../libs/sequelize");
+const {pagination} = require("../utils/functions");
 
 const serviceRegion = new RegionService();
 const serviceCity = new CityService();
@@ -52,7 +53,7 @@ class PetService {
     }
   }
 
-  async findByRegion(regionName, cityName) {
+  async findByRegion(regionName, cityName, limit, offset) {
     const region = await serviceRegion.findByName(regionName);
     delete region.dataValues.name;
     delete region.dataValues.id;

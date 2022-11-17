@@ -146,8 +146,9 @@ router.get("/petition/sent",
   passport.authenticate("jwt", {session: false}),
   async (req, res, next) => {
     try {
-      const user = req.user
-      const petitions = await servicePetition.findSent(user.sub);
+      const {limit, offset} = req.query;
+      const user = req.user;
+      const petitions = await servicePetition.findSent(user.sub,limit,offset);
       res.status(200).json(petitions);
     } catch (error) {
       next(error)
@@ -159,8 +160,9 @@ router.get("/petition/received",
   passport.authenticate("jwt", {session: false}),
   async (req, res, next) => {
     try {
+      const {limit, offset} = req.query;
       const user = req.user
-      const petitions = await servicePetition.findReceived(user.sub);
+      const petitions = await servicePetition.findReceived(user.sub,limit,offset);
       res.status(200).json(petitions);
     } catch (error) {
       next(error)

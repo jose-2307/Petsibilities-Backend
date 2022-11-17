@@ -24,16 +24,17 @@ class PetService {
     return newPet;
   }
 
-  async find(available) {
+  async find(available,limit,offset) {
     if (!available) {
       const pets = await models.Pet.findAll();
       await this.petImages(pets);
       return pets;
     }
-    const pets = await models.Pet.findAll({
+    let pets = await models.Pet.findAll({
       where: {adopted: false}
     });
     await this.petImages(pets);
+    if (limit != undefined && offset != undefined) pets = pagination(limit,offset,pets);
     return pets;
   }
 
@@ -58,7 +59,8 @@ class PetService {
     delete region.dataValues.name;
     delete region.dataValues.id;
     if(cityName !== undefined ) {
-      const resp = await this.findByCity(cityName);
+      let resp = await this.findByCity(cityName);
+      if (limit != undefined && offset != undefined) resp = pagination(limit,offset,resp);
       return resp;
     }
     const cities = [];
@@ -79,6 +81,7 @@ class PetService {
         }
       }
     }
+    if (limit != undefined && offset != undefined) pets = pagination(limit,offset,pets);
     return pets;
   }
 
@@ -102,7 +105,7 @@ class PetService {
     return pets;
   }
 
-  async findBySpecies(speciesName,petsArray,breedName) {
+  async findBySpecies(speciesName,petsArray,breedName,limit,offset) {
     if(!speciesName) throw boom.badRequest();
     const species = await serviceSpecies.findByName(speciesName);
     const breeds = [];
@@ -113,6 +116,7 @@ class PetService {
         if(p.adopted === false) pets.push(await this.findOne(p.id));
       }
       if (petsArray !== undefined && petsArray !== 0) this.deleteInvalid(pets,petsArray);
+      if (limit != undefined && offset != undefined) pets = pagination(limit,offset,pets);
       return pets;
     }
     for(const s of species.breeds){
@@ -124,101 +128,85 @@ class PetService {
       }
     }
     if (petsArray !== undefined) this.deleteInvalid(pets,petsArray);
+    if (limit != undefined && offset != undefined) pets = pagination(limit,offset,pets);
     return pets;
   }
 
-  async findByGender(genderName,petsArray) {
+  async findByGender(genderName,petsArray,limit,offset) {
     const gender = await serviceGender.findByName(genderName);
-    const pets = [];
+    let pets = [];
     for(const p of gender.pets) {
       if(p.adopted === false) pets.push(await this.findOne(p.id));
     }
     if (petsArray !== undefined) {
       this.deleteInvalid(pets,petsArray);
     }
+    if (limit != undefined && offset != undefined) pets = pagination(limit,offset,pets);
     return pets;
   }
 
 
-  async filter(region,city,species,breed,gender) {
-    if (region == undefined && city === undefined && breed === undefined) {
-      //species y gender
+  async filter(region,city,species,breed,gender,limit,offset) {
+    if (region == undefined && city === undefined && breed === undefined) {//species y gender
       const speciesPets = await this.findBySpecies(species);
-      const array = speciesPets.map(sp => {
-        return sp.id;
-      });
-      const genderPets = await this.findByGender(gender,array);
+      const array = speciesPets.map(sp => {return sp.id});
+      let genderPets = await this.findByGender(gender,array);
+      if (limit != undefined && offset != undefined) genderPets = pagination(limit,offset,genderPets);
       return genderPets;
     }
-    if (region == undefined && city === undefined && gender === undefined) {
-      //species y breed
-      const speciesPets = await this.findBySpecies(species,0,breed);
+    if (region == undefined && city === undefined && gender === undefined) {//species y breed
+      let speciesPets = await this.findBySpecies(species,0,breed);
+      if (limit != undefined && offset != undefined) speciesPets = pagination(limit,offset,speciesPets);
       return speciesPets;
     }
-    if (species === undefined && breed === undefined && gender === undefined) {
-      //region y city
-      const regionPets = await this.findByRegion(region,city);
+    if (species === undefined && breed === undefined && gender === undefined) {//region y city
+      let regionPets = await this.findByRegion(region,city);
+      if (limit != undefined && offset != undefined) regionPets = pagination(limit,offset,regionPets);
       return regionPets;
     }
-    if (species === undefined && breed === undefined) {
-      //region, city y gender
+    if (species === undefined && breed === undefined) {//region, city y gender
       const regionPets = await this.findByRegion(region,city);
-      const array = regionPets.map(rp => {
-        return rp.id;
-      });
-      const genderPets = await this.findByGender(gender,array);
+      const array = regionPets.map(rp => {return rp.id});
+      let genderPets = await this.findByGender(gender,array);
+      if (limit != undefined && offset != undefined) genderPets = pagination(limit,offset,genderPets);
       return genderPets;
     }
-    if (breed === undefined && gender === undefined) {
-      //region, city y species
+    if (breed === undefined && gender === undefined) {//region, city y species
       const regionPets = await this.findByRegion(region,city);
-      const array = regionPets.map(rp => {
-        return rp.id;
-      });
-      const speciesPets = await this.findBySpecies(species,array);
+      const array = regionPets.map(rp => {return rp.id});
+      let speciesPets = await this.findBySpecies(species,array);
+      if (limit != undefined && offset != undefined) speciesPets = pagination(limit,offset,speciesPets);
       return speciesPets;
     }
-    if (region == undefined && city === undefined) {
-      //species, breed y gender
+    if (region == undefined && city === undefined) {//species, breed y gender
       const speciesPets = await this.findBySpecies(species,0,breed);
-      const array = speciesPets.map(sp => {
-        return sp.id;
-      });
-      const genderPets = await this.findByGender(gender,array);
+      const array = speciesPets.map(sp => {return sp.id});
+      let genderPets = await this.findByGender(gender,array);
+      if (limit != undefined && offset != undefined) genderPets = pagination(limit,offset,genderPets);
       return genderPets;
     }
-    if (breed === undefined) {
-      //region, city, species y gender
+    if (breed === undefined) {//region, city, species y gender
       const regionPets = await this.findByRegion(region,city);
-      const array = regionPets.map(rp => {
-        return rp.id;
-      });
+      const array = regionPets.map(rp => {return rp.id});
       const speciesPets = await this.findBySpecies(species,array);
-      const array2 = speciesPets.map(sp => {
-        return sp.id;
-      });
-      const genderPets = await this.findByGender(gender,array2);
+      const array2 = speciesPets.map(sp => {return sp.id});
+      let genderPets = await this.findByGender(gender,array2);
+      if (limit != undefined && offset != undefined) genderPets = pagination(limit,offset,genderPets);
       return genderPets;
     }
-    if (gender === undefined) {
-      //region, city, species y breed
+    if (gender === undefined) {//region, city, species y breed
       const regionPets = await this.findByRegion(region,city);
-      const array = regionPets.map(rp => {
-        return rp.id;
-      });
-      const speciesPets = await this.findBySpecies(species,array,breed);
+      const array = regionPets.map(rp => {return rp.id});
+      let speciesPets = await this.findBySpecies(species,array,breed);
+      if (limit != undefined && offset != undefined) speciesPets = pagination(limit,offset,speciesPets);
       return speciesPets;
-    }
-    //todo
+    }//todo
     const regionPets = await this.findByRegion(region,city);
-    const array = regionPets.map(rp => {
-      return rp.id;
-    });
+    const array = regionPets.map(rp => {return rp.id});
     const speciesPets = await this.findBySpecies(species,array,breed);
-    const array2 = speciesPets.map(sp => {
-      return sp.id;
-    });
-    const genderPets = await this.findByGender(gender,array2);
+    const array2 = speciesPets.map(sp => {return sp.id});
+    let genderPets = await this.findByGender(gender,array2);
+    if (limit != undefined && offset != undefined) genderPets = pagination(limit,offset,genderPets);
     return genderPets;
   }
 

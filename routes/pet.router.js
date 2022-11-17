@@ -30,12 +30,12 @@ router.get("/",
 router.get("/filter", //Region => City => Species => Breeds => Gender
   async (req, res, next) => {
     try {
-      const { species,region,city,breed,gender } = req.query;
-      if(!species && !region && !city && !breed && !gender) res.json(await service.find(true));
-      if(species && !region && !city && !breed && !gender) res.json(await service.findBySpecies(species));
-      if(!species && region && !city && !breed && !gender) res.json(await service.findByRegion(region));
-      if(!species && !region && !city && !breed && gender) res.json(await service.findByGender(gender));
-      res.json(await service.filter(region,city,species,breed,gender));
+      const { species,region,city,breed,gender,limit,offset } = req.query;
+      if(!species && !region && !city && !breed && !gender) res.json(await service.find(true,limit,offset));
+      if(species && !region && !city && !breed && !gender) res.json(await service.findBySpecies(species,undefined,undefined,limit,offset));
+      if(!species && region && !city && !breed && !gender) res.json(await service.findByRegion(region,undefined,limit,offset));
+      if(!species && !region && !city && !breed && gender) res.json(await service.findByGender(gender,undefined,limit,offset));
+      res.json(await service.filter(region,city,species,breed,gender,limit,offset));
     } catch (error) {
       next(error);
     }

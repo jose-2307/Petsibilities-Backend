@@ -4,7 +4,7 @@ const passport = require("passport");
 const PetService = require("./../services/pet.service");
 const UserService = require("./../services/user.service");
 const validatorHandler = require("./../middlewares/validator.handler");
-const { createPetSchema,updatePetSchema,getPetSchema } = require("./../schemas/pet.schema");
+const { createPetSchema,updatePetSchema,getPetSchema,getQueryPetSchema } = require("./../schemas/pet.schema");
 const { checkRole } = require("./../middlewares/auth.handler");
 
 const router = express.Router();
@@ -28,6 +28,7 @@ router.get("/",
 
 
 router.get("/filter", //Region => City => Species => Breeds => Gender
+  validatorHandler(getQueryPetSchema, "query"),
   async (req, res, next) => {
     try {
       const { species,region,city,breed,gender,limit,offset } = req.query;
@@ -35,7 +36,7 @@ router.get("/filter", //Region => City => Species => Breeds => Gender
       if(species && !region && !city && !breed && !gender) res.json(await service.findBySpecies(species,undefined,undefined,limit,offset));
       if(!species && region && !city && !breed && !gender) res.json(await service.findByRegion(region,undefined,limit,offset));
       if(!species && !region && !city && !breed && gender) res.json(await service.findByGender(gender,undefined,limit,offset));
-      res.json(await service.filter(region,city,species,breed,gender,limit,offset));
+      res.json(await service.filter(req.query));
     } catch (error) {
       next(error);
     }

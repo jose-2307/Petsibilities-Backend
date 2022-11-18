@@ -146,7 +146,8 @@ class PetService {
   }
 
 
-  async filter(region,city,species,breed,gender,limit,offset) {
+  async filter(query) {
+    const {region,city,species,breed,gender,limit,offset} = query;
     if (region == undefined && city === undefined && breed === undefined) {//species y gender
       const speciesPets = await this.findBySpecies(species);
       const array = speciesPets.map(sp => {return sp.id});

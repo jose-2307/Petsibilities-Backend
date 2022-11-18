@@ -127,12 +127,17 @@ class PetitionService {
     const pet = await servicePet.findOne(userPet.petId);
     const adopter = await serviceUser.findOne(petition.userId);
     const adopted = await petition.update({acepted:changes.acepted});
+    const lastOwner = await serviceUser.findOne(userPet.userId);
+    const uri = `http://localhost:3001/score/${userPet.userId}?name=${lastOwner.name}`;
     const mail = {
       from: config.email,
       to: `${adopter.email}`,
       subject: "Petición de adopción aceptada.",
       html: `<p>
-        ¡Felicidades ${adopter.name}! Tu petición de adopción para ${pet.name} fue <b>aprobada con éxito<b>.
+        ¡Felicidades ${adopter.name}! Tu petición de adopción para ${pet.name} fue <b>aprobada con éxito</b>.
+        <br>
+        <br>
+        Ingresa al siguiente link para <b>calificar a ${lastOwner.name}:</b> ${uri}
       </p>`
     }
     const resp1 = await serviceAuth.sendMail(mail);

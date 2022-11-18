@@ -31,7 +31,7 @@ class AuthService {
       role: user.role.name,
     };
     const accessToken = jwt.sign(payload, config.jwtSecretLogin, {
-      expiresIn: "3min",
+      expiresIn: "10min",
     });
     const refreshToken = jwt.sign(payload, config.jwtSecretRefresh, {
       expiresIn: "90min",
@@ -55,7 +55,7 @@ class AuthService {
       const accessToken = jwt.sign(
         { sub: payloadRefresh.sub, role: payloadRefresh.role },
         config.jwtSecretLogin,
-        { expiresIn: "3min" }
+        { expiresIn: "10min" }
       );
       return {
         accessToken,

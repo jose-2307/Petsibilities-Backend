@@ -137,7 +137,7 @@ class PetitionService {
         ¡Felicidades ${adopter.name}! Tu petición de adopción para ${pet.name} fue <b>aprobada con éxito</b>.
         <br>
         <br>
-        Ingresa al siguiente link para <b>calificar a ${lastOwner.name}:</b> ${uri}
+        Ingresa al siguiente link para <b>calificar a ${lastOwner.name}</b>: <a target="_blank" href=${uri}>calificar</a>
       </p>`
     }
     const resp1 = await serviceAuth.sendMail(mail);

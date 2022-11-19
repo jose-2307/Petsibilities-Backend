@@ -85,7 +85,7 @@ class PetitionService {
     const userPets = await models.UserPet.findAll({where:{userId}});
     let petitions = [];
     for (const up of userPets){
-      petitions.push(await models.Petition.findAll({where:{userPetId:up.id, acepted:null}}));
+      petitions.push(await models.Petition.findAll({where:{userPetId:up.id, accepted:null}}));
     }
     petitions = petitions.flat(1);
     const userPetsPetitions = [];
@@ -121,12 +121,12 @@ class PetitionService {
   async accept(userId,id,changes) { //mandar mail
     const petition = await this.findOne(id);
     const userPet = await serviceUser.findOneUserPet(petition.userPetId);
-    if (userPet.userId != userId || changes.acepted === false) {
+    if (userPet.userId != userId || changes.accepted === false) {
       throw boom.unauthorized();
     }
     const pet = await servicePet.findOne(userPet.petId);
     const adopter = await serviceUser.findOne(petition.userId);
-    const adopted = await petition.update({acepted:changes.acepted});
+    const adopted = await petition.update({accepted:changes.accepted});
     const lastOwner = await serviceUser.findOne(userPet.userId);
     const uri = `http://localhost:3001/score/${userPet.userId}?name=${lastOwner.name}`;
     const mail = {
@@ -148,12 +148,12 @@ class PetitionService {
   async reject(userId,id,changes) { //mandar mail
     const petition = await this.findOne(id);
     const userPet = await serviceUser.findOneUserPet(petition.userPetId);
-    if (userPet.userId != userId || changes.acepted === true) {
+    if (userPet.userId != userId || changes.accepted === true) {
       throw boom.unauthorized();
     }
     const pet = await servicePet.findOne(userPet.petId);
     const adopter = await serviceUser.findOne(petition.userId);
-    const rejected = await petition.update({acepted:changes.acepted});
+    const rejected = await petition.update({accepted:changes.accepted});
     const mail = {
       from: config.email,
       to: `${adopter.email}`,

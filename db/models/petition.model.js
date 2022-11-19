@@ -23,7 +23,7 @@ const PetitionSchema = {
     allowNull: false,
     defaultValue: Sequelize.NOW,
   },
-  acepted: {
+  accepted: {
     type: DataTypes.BOOLEAN,
     unique: false,
     allowNull: true

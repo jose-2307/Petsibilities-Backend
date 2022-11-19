@@ -1,6 +1,6 @@
 const boom = require("@hapi/boom");
 
-const config = require("./../config/config");
+const {config} = require("./../config/config");
 const { models } = require("./../libs/sequelize");
 const AuthService = require("./auth.service");
 const UserService = require("./user.service");
@@ -128,7 +128,7 @@ class PetitionService {
     const adopter = await serviceUser.findOne(petition.userId);
     const adopted = await petition.update({accepted:changes.accepted});
     const lastOwner = await serviceUser.findOne(userPet.userId);
-    const uri = `http://localhost:3001/score/${userPet.userId}?name=${lastOwner.name}`;
+    const uri = `http://${config.messageUri}/score/${userPet.userId}?name=${lastOwner.name}`;
     const mail = {
       from: config.email,
       to: `${adopter.email}`,

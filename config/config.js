@@ -10,6 +10,7 @@ const config = {
   jwtSecretRecovery: process.env.JWT_SECRET_RECOVERY_PASSWORD,
   email: process.env.EMAIL,
   emailPass: process.env.EMAIL_PASS,
+  messageUri: process.env.MESSAGE_URI,
 }
 
 module.exports = { config };

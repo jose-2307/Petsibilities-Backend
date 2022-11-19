@@ -13,5 +13,14 @@ const refreshTokenSchema = Joi.object({
   token: token.required()
 });
 
+const recoverySchema = Joi.object({
+  email: email.required()
+});
 
-module.exports = { loginSchema,refreshTokenSchema }
+const changePasswordSchema = Joi.object({
+  password: password.required(),
+  token: token.required()
+});
+
+
+module.exports = { loginSchema,refreshTokenSchema, recoverySchema, changePasswordSchema }

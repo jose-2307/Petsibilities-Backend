@@ -82,6 +82,40 @@ class AuthService {
     }
   }
 
+  async sendRecovery(email){
+    const user = await serviceUser.findByEmail(email);
+    if (!user) {
+      throw boom.unauthorized();
+    }
+    const payload = { sub:user.id };
+    const token = jwt.sign(payload, config.jwtSecretRecovery, {expiresIn: "15min"});
+    const uri = `http://${config.recoveryUri}/recovery?token=${token}`;
+    await serviceUser.update(user.id,{recoveryToken: token});
+    const mail = {
+      from: config.email,
+      to: `${user.email}`,
+      subject: "Recuperar contraseña",
+      html: `<p>Ingresa al siguiente link para <b>restablecer tu contraseña</b>: <a target="_blank" href=${uri}>restablecer</a></p>`
+    }
+    const resp = await this.sendMail(mail);
+    return resp;
+  }
+
+  async changePassword(token, newPassword){
+    try {
+      const payload = jwt.verify(token,config.jwtSecretRefresh);
+      const user = await serviceUser.findOne(payload.sub);
+      if (token !== user.recoveryToken) {
+        throw boom.unauthorized();
+      }
+      const hash = await bcrypt.hash(newPassword, 10);
+      await serviceUser.update(user.id,{password: hash, recoveryToken: null});
+      return { message: "Password changed" }
+    } catch (error) {
+      throw boom.unauthorized();
+    }
+  }
+
   async sendMail(infoMail){
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",

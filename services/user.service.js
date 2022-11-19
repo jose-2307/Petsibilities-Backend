@@ -2,8 +2,11 @@ const boom = require("@hapi/boom");
 const bcrypt = require("bcrypt");
 const RoleService = require("./role.service");
 const { models } = require("./../libs/sequelize");
+const { config } = require("./../config/config");
+const AuthService = require("./auth.service");
 
 const serviceRole = new RoleService();
+const serviceAuth = new AuthService();
 
 class UserService {
   constructor(){}
@@ -16,7 +19,19 @@ class UserService {
     });
     delete newUser.dataValues.password;
     delete newUser.dataValues.recoveryToken;
-    return newUser;
+    const mail = {
+      from: config.email,
+      to: `${newUser.email}`,
+      subject: `¡${newUser.name}, ya eres parte de nuestra comunidad!`,
+      html: `<p>
+        Tu cuenta fue creada con éxito, ${newUser.name}.
+        <br>
+        A partir de ahora podrás registrar a tus mascotas para darlas en adopción o, mediante una petición, postular
+        a la adopción de la mascota que desees.
+      </p>`
+    }
+    const resp = await serviceAuth.sendMail(mail);
+    return {resp,newUser};
   }
 
   async find() {

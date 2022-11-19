@@ -11,6 +11,7 @@ const config = {
   email: process.env.EMAIL,
   emailPass: process.env.EMAIL_PASS,
   messageUri: process.env.MESSAGE_URI,
+  recoveryUri: process.env.RECOVERY_URI,
 }
 
 module.exports = { config };

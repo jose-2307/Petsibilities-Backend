@@ -121,7 +121,7 @@ class PetitionService {
   async accept(userId,id,changes) { //mandar mail
     const petition = await this.findOne(id);
     const userPet = await serviceUser.findOneUserPet(petition.userPetId);
-    if (userPet.userId != userId || changes.accepted === false) {
+    if (userPet.userId != userId || petition.accepted !== null || changes.accepted === false) {
       throw boom.unauthorized();
     }
     const pet = await servicePet.findOne(userPet.petId);
@@ -148,7 +148,7 @@ class PetitionService {
   async reject(userId,id,changes) { //mandar mail
     const petition = await this.findOne(id);
     const userPet = await serviceUser.findOneUserPet(petition.userPetId);
-    if (userPet.userId != userId || changes.accepted === true) {
+    if (userPet.userId != userId || petition.accepted !== null || changes.accepted === true) {
       throw boom.unauthorized();
     }
     const pet = await servicePet.findOne(userPet.petId);

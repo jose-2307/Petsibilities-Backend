@@ -10,12 +10,11 @@ module.exports = {
       ' DECLARE'+
         ' _pet INTEGER;'+
       ' BEGIN'+
-        ' IF (new.acepted = False) THEN'+
-            " RAISE EXCEPTION 'ERROR: action denied.';"+
+        ' IF (new.acepted = True) THEN'+
+          ' SELECT up.pet_id INTO _pet FROM (SELECT * FROM users_pets WHERE id = old.user_pet_id) as up;'+
+          " INSERT INTO users_pets(user_id,pet_id,date) VALUES(old.user_id,_pet,current_date);"+
+          ' UPDATE pets SET adopted = True WHERE id = _pet;'+
         ' END IF;'+
-        ' SELECT up.pet_id INTO _pet FROM (SELECT * FROM users_pets WHERE id = old.user_pet_id) as up;'+
-        " INSERT INTO users_pets(user_id,pet_id,date) VALUES(old.user_id,_pet,current_date);"+
-        ' UPDATE pets SET adopted = True WHERE id = _pet;'+
         ' RETURN new;'+
       ' END;'+
       ' $$');

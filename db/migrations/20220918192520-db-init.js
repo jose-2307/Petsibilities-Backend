@@ -369,7 +369,8 @@ module.exports = {
       id: {
         allowNull: false,
         autoIncrement: true,
-        primaryKey: true,
+        unique:true,
+        //primaryKey: true,
         type: DataTypes.INTEGER
       },
       comment: {
@@ -386,13 +387,13 @@ module.exports = {
       acepted: {
         type: DataTypes.BOOLEAN,
         unique: false,
-        allowNull: false,
-        defaultValue: false
+        allowNull: true
       },
       userId: {
         field: "user_id",
         allowNull: false,
         type: DataTypes.INTEGER,
+        primaryKey: true,
         references: {
           model: USER_TABLE,
           key: "id"
@@ -404,6 +405,7 @@ module.exports = {
         field: "user_pet_id",
         allowNull: false,
         type: DataTypes.INTEGER,
+        primaryKey: true,
         references: {
           model: USER_PET_TABLE,
           key: "id"

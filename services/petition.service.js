@@ -85,7 +85,7 @@ class PetitionService {
     const userPets = await models.UserPet.findAll({where:{userId}});
     let petitions = [];
     for (const up of userPets){
-      petitions.push(await models.Petition.findAll({where:{userPetId:up.id}}));
+      petitions.push(await models.Petition.findAll({where:{userPetId:up.id, acepted:null}}));
     }
     petitions = petitions.flat(1);
     const userPetsPetitions = [];
@@ -111,14 +111,14 @@ class PetitionService {
 
 
   async findOne(id) {
-    const petition = await models.Petition.findByPk(id)
+    const petition = await models.Petition.findAll({where:{id}});
     if(!petition) {
       throw boom.notFound("petition not found");
     }
-    return petition;
+    return petition[0];
   }
 
-  async update(userId,id,changes) { //mandar mail
+  async accept(userId,id,changes) { //mandar mail
     const petition = await this.findOne(id);
     const userPet = await serviceUser.findOneUserPet(petition.userPetId);
     if (userPet.userId != userId || changes.acepted === false) {
@@ -144,14 +144,16 @@ class PetitionService {
     return {resp1,adopted,petition};
   }
 
-  async delete(userId,id) { //mandar mail
+
+  async reject(userId,id,changes) { //mandar mail
     const petition = await this.findOne(id);
     const userPet = await serviceUser.findOneUserPet(petition.userPetId);
-    if (userPet.userId != userId) {
+    if (userPet.userId != userId || changes.acepted === true) {
       throw boom.unauthorized();
     }
     const pet = await servicePet.findOne(userPet.petId);
     const adopter = await serviceUser.findOne(petition.userId);
+    const rejected = await petition.update({acepted:changes.acepted});
     const mail = {
       from: config.email,
       to: `${adopter.email}`,
@@ -161,9 +163,7 @@ class PetitionService {
       </p>`
     }
     const resp1 = await serviceAuth.sendMail(mail);
-
-    await petition.destroy();
-    return { id, resp1 };
+    return { resp1,rejected,petition };
   }
 }
 

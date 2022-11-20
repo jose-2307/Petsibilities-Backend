@@ -11,7 +11,7 @@ const description = Joi.string().min(5).max(250);
 const houseSize = Joi.number().integer().min(10);
 const roleId = Joi.number().integer();
 const cityId = Joi.number().integer();
-const urlImage = Joi.string().alphanum();
+const urlImage = Joi.string();
 const phoneNumber = Joi.string().min(12).max(12);
 
 //score

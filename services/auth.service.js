@@ -92,8 +92,20 @@ class AuthService {
     const mail = {
       from: config.email,
       to: `${user.email}`,
-      subject: "Recuperar contraseña",
-      html: `<p>Ingresa al siguiente link para <b>restablecer tu contraseña:</b> <a target="_blank" href=${uri}>restablecer</a></p>`
+      subject: "Restablecer contraseña",
+      html: `<p>Hola, ${user.name}:
+      <br>
+      <br>
+      Hemos recibido una solicitud de cambio de contraseña. Ingresa al siguiente link, de 15 minutos de duración, para <b>restablecer tu contraseña:</b> <a target="_blank" href=${uri}>restablecer</a>
+      <br>
+      <br>
+      Si no has solicitado este link, puede que alguien esté intentando acceder a tu cuenta. <b>No reenvíes este mail ni des el link a nadie.<b/>
+      <br>
+      <br>
+      Atentamente,
+      <br>
+      El equipo de Petsibilities
+      </p>`
     }
     const resp = await serviceMessage.sendMail(mail);
     return resp;

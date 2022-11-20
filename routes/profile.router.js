@@ -29,7 +29,7 @@ router.get("/personal-information",
   }
 );
 
-router.patch("/personal-information",
+router.put("/personal-information",
   passport.authenticate("jwt", {session: false}),
   validatorHandler(updateUserSchema, "body"),
   async (req, res, next) => {

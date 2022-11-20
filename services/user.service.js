@@ -3,10 +3,11 @@ const bcrypt = require("bcrypt");
 const RoleService = require("./role.service");
 const { models } = require("./../libs/sequelize");
 const { config } = require("./../config/config");
-const AuthService = require("./auth.service");
+const MessageService = require("./message.service");
 
 const serviceRole = new RoleService();
-const serviceAuth = new AuthService();
+const serviceMessage = new MessageService();
+
 
 class UserService {
   constructor(){}
@@ -30,7 +31,7 @@ class UserService {
         a la adopción de la mascota que desees.
       </p>`
     }
-    const resp = await serviceAuth.sendMail(mail);
+    const resp = await serviceMessage.sendMail(mail);
     return {resp,newUser};
   }
 

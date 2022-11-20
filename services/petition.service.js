@@ -2,13 +2,13 @@ const boom = require("@hapi/boom");
 
 const {config} = require("./../config/config");
 const { models } = require("./../libs/sequelize");
-const AuthService = require("./auth.service");
+const MessageService = require("./message.service");
 const UserService = require("./user.service");
 const PetService = require("./pet.service");
 const {pagination} = require("../utils/functions");
 
 
-const serviceAuth = new AuthService();
+const serviceMessage = new MessageService();
 const serviceUser = new UserService();
 const servicePet = new PetService();
 
@@ -54,8 +54,8 @@ class PetitionService {
           </ul>
       </p>`
     }
-    const resp1 = await serviceAuth.sendMail(mailToAdopter);
-    const resp2 = await serviceAuth.sendMail(mailOwner);
+    const resp1 = await serviceMessage.sendMail(mailToAdopter);
+    const resp2 = await serviceMessage.sendMail(mailOwner);
     return {
       resp1,
       resp2,
@@ -85,7 +85,7 @@ class PetitionService {
     const userPets = await models.UserPet.findAll({where:{userId}});
     let petitions = [];
     for (const up of userPets){
-      petitions.push(await models.Petition.findAll({where:{userPetId:up.id, accepted:null}}));
+      petitions.push(await models.Petition.findAll({where:{userPetId:up.id}}));
     }
     petitions = petitions.flat(1);
     const userPetsPetitions = [];
@@ -140,7 +140,7 @@ class PetitionService {
         Ingresa al siguiente link para <b>calificar a ${lastOwner.name}</b>: <a target="_blank" href=${uri}>calificar</a>
       </p>`
     }
-    const resp1 = await serviceAuth.sendMail(mail);
+    const resp1 = await serviceMessage.sendMail(mail);
     return {resp1,adopted,petition};
   }
 
@@ -162,7 +162,7 @@ class PetitionService {
         ¡Lo sentimos ${adopter.name}! Tu petición de adopción para ${pet.name} fue <b>rechazada por el dueño<b>.
       </p>`
     }
-    const resp1 = await serviceAuth.sendMail(mail);
+    const resp1 = await serviceMessage.sendMail(mail);
     return { resp1,rejected,petition };
   }
 }

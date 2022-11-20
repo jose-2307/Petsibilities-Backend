@@ -1,13 +1,12 @@
 const boom = require("@hapi/boom");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
 
+const MessageService = require("./message.service");
 const { config } = require("./../config/config");
 const UserService = require("./user.service");
 const serviceUser = new UserService();
-//const RoleService = require("./role.service");
-//const serviceRole = new RoleService();
+const serviceMessage = new MessageService();
 
 class AuthService {
   async login(email, password) {
@@ -25,7 +24,6 @@ class AuthService {
   }
 
   async signToken(user) {
-    //const { name } = await serviceRole.findOne(user.roleId);
     const payload = {
       sub: user.id,
       role: user.role.name,
@@ -95,15 +93,16 @@ class AuthService {
       from: config.email,
       to: `${user.email}`,
       subject: "Recuperar contraseña",
-      html: `<p>Ingresa al siguiente link para <b>restablecer tu contraseña</b>: <a target="_blank" href=${uri}>restablecer</a></p>`
+      html: `<p>Ingresa al siguiente link para <b>restablecer tu contraseña:</b> <a target="_blank" href=${uri}>restablecer</a></p>`
     }
-    const resp = await this.sendMail(mail);
+    const resp = await serviceMessage.sendMail(mail);
     return resp;
   }
 
   async changePassword(token, newPassword){
     try {
-      const payload = jwt.verify(token,config.jwtSecretRefresh);
+
+      const payload = jwt.verify(token,config.jwtSecretRecovery);
       const user = await serviceUser.findOne(payload.sub);
       if (token !== user.recoveryToken) {
         throw boom.unauthorized();
@@ -114,24 +113,6 @@ class AuthService {
     } catch (error) {
       throw boom.unauthorized();
     }
-  }
-
-  async sendMail(infoMail){
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      secure: true,
-      port: 465,
-      auth: {
-          user: config.email,
-          pass: config.emailPass,
-      },
-      tls: {
-        rejectUnauthorized: false
-      }
-    });
-
-    await transporter.sendMail(infoMail);
-    return { message: "mail sent" };
   }
 }
 

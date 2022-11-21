@@ -15,7 +15,7 @@ const urlImage = Joi.string();
 const phoneNumber = Joi.string().min(12).max(12);
 
 //score
-const score = Joi.number().integer().min(1).max(5);
+const score = Joi.number().integer().min(0).max(5);
 
 
 //user-pet

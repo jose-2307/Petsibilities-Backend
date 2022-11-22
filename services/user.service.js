@@ -59,7 +59,6 @@ class UserService {
     await this.petImages(user.myPet);
     const role = await serviceRole.findOne(user.roleId);
     this.deleteProperty(user,role);
-
     return user;
   }
 

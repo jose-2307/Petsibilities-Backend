@@ -21,6 +21,8 @@ router.get("/personal-information",
     try {
       const user = req.user;
       const resp = await serviceUser.findOne(user.sub);
+      const score = await serviceUser.calculateScore(user.sub);
+      resp.dataValues.score = score;
       delete resp.dataValues.recoveryToken;
       res.json(resp);
     } catch (error) {

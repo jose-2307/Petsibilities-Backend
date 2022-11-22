@@ -30,6 +30,8 @@ router.get("/:id",
     try {
       const { id } = req.params;
       const user = await service.findOne(id);
+      const score = await service.calculateScore(id);
+      user.dataValues.score = score;
       res.json(user);
     } catch (error) {
       next(error);

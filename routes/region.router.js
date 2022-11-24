@@ -1,5 +1,5 @@
 const express = require("express");
-
+const passport = require("passport");
 
 const RegionService = require("./../services/region.service");
 const validatorHandler = require("./../middlewares/validator.handler");
@@ -34,6 +34,8 @@ router.get("/:id",
 );
 
 router.post("/",
+  passport.authenticate("jwt",{session: false}),
+  checkRole("Admin"),
   validatorHandler(createRegionSchema, "body"),
   async (req, res, next) => {
     try {
@@ -47,6 +49,8 @@ router.post("/",
 );
 
 router.delete("/:id",
+  passport.authenticate("jwt",{session: false}),
+  checkRole("Admin"),
   validatorHandler(getRegionSchema, "params"),
   async (req, res, next) => {
     try {

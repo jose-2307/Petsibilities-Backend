@@ -34,29 +34,14 @@ router.get("/:id",
 );
 
 router.post("/",
-  // passport.authenticate("jwt",{session: false}),
-  // checkRole("Admin"),
+  passport.authenticate("jwt",{session: false}),
+  checkRole("Admin"),
   validatorHandler(createGenderSchema, "body"),
   async (req, res, next) => {
     try {
       const body = req.body;
       const newGender = await service.create(body);
       res.status(201).json(newGender);
-    } catch (error) {
-      next(error)
-    }
-  }
-);
-
-router.delete("/:id",
-  passport.authenticate("jwt",{session: false}),
-  checkRole("Admin"),
-  validatorHandler(getGenderSchema, "params"),
-  async (req, res, next) => {
-    try {
-      const { id } = req.params;
-      await service.delete(id);
-      res.json({id});
     } catch (error) {
       next(error)
     }

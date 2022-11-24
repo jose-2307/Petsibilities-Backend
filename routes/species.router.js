@@ -34,8 +34,8 @@ router.get("/:id",
 );
 
 router.post("/",
-  // passport.authenticate("jwt",{session: false}),
-  // checkRole("Admin"),
+  passport.authenticate("jwt",{session: false}),
+  checkRole("Admin"),
   validatorHandler(createSpeciesSchema, "body"),
   async (req, res, next) => {
     try {

@@ -1,5 +1,5 @@
 const express = require("express");
-
+const passport = require("passport");
 
 const CityService = require("./../services/city.service");
 const validatorHandler = require("./../middlewares/validator.handler");
@@ -13,11 +13,7 @@ router.get("/",
   async (req, res, next) => {
     try {
       const { city } = req.query;
-      //console.log("----------------------------"+city)
       if(!city) res.json(await service.find());
-
-      //const pets = await service.find();
-
       res.json(await service.findByName(city));
     } catch (error) {
       next(error);
@@ -39,6 +35,8 @@ router.get("/:id",
 );
 
 router.post("/",
+  passport.authenticate("jwt",{session: false}),
+  checkRole("Admin"),
   validatorHandler(createCitySchema, "body"),
   async (req, res, next) => {
     try {
@@ -53,6 +51,8 @@ router.post("/",
 
 
 router.delete("/:id",
+  passport.authenticate("jwt",{session: false}),
+  checkRole("Admin"),
   validatorHandler(getCitySchema, "params"),
   async (req, res, next) => {
     try {

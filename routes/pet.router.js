@@ -77,9 +77,9 @@ router.post("/",
   }
 );
 
-router.patch("/:id/:userId", //validar que el dueño (último) sea el que modifique.
+router.patch("/:id/:userId",
   // passport.authenticate("jwt",{session: false}),
-  // checkRole("Admin"),
+  // checkRole("Admin","Individual","Organization"),
   validatorHandler(getPetSchema, "params"),
   validatorHandler(updatePetSchema, "body"),
   async (req, res, next) => {
@@ -95,9 +95,9 @@ router.patch("/:id/:userId", //validar que el dueño (último) sea el que modifi
   }
 );
 
-router.delete("/:id/:userId", //validar que el dueño (último) sea el que elimine.
+router.delete("/:id/:userId",
   passport.authenticate("jwt",{session: false}),
-  checkRole("Admin"),
+  checkRole("Admin","Individual","Organization"),
   validatorHandler(getPetSchema, "params"),
   async (req, res, next) => {
     try {

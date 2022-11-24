@@ -27,8 +27,14 @@ class UserService {
       html: `<p>
         Tu cuenta fue creada con éxito, ${newUser.name}.
         <br>
+        <br>
         A partir de ahora podrás registrar a tus mascotas para darlas en adopción o, mediante una petición, postular
         a la adopción de la mascota que desees.
+        <br>
+        <br>
+        Atentamente,
+        <br>
+        El equipo de Petsibilities
       </p>`
     }
     const resp = await serviceMessage.sendMail(mail);

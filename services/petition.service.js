@@ -34,7 +34,14 @@ class PetitionService {
       subject: "Petición enviada con éxito.",
       html: `<p>
         Acabas de solicitar la adopción de ${pet.name}. ¡Buena suerte!
-        <br>Por favor <b>espara hasta nuevo aviso</b>, mientras que el dueño evalúa tu petición.
+        <br>
+        <br>
+        Por favor <b>espara hasta nuevo aviso</b>, mientras que el dueño evalúa tu petición.
+        <br>
+        <br>
+        Atentamente,
+        <br>
+        El equipo de Petsibilities
       </p>`
     }
     const newPetition = await models.Petition.create(data);
@@ -52,6 +59,11 @@ class PetitionService {
             <li>Comentario: ${comment}</li>
             <li>Fecha: ${newPetition.date}</li>
           </ul>
+        <br>
+        <br>
+        Atentamente,
+        <br>
+        El equipo de Petsibilities
       </p>`
     }
     const resp1 = await serviceMessage.sendMail(mailToAdopter);
@@ -138,6 +150,11 @@ class PetitionService {
         <br>
         <br>
         Ingresa al siguiente link para <b>calificar a ${lastOwner.name}</b>: <a target="_blank" href=${uri}>calificar</a>
+        <br>
+        <br>
+        Atentamente,
+        <br>
+        El equipo de Petsibilities
       </p>`
     }
     const resp1 = await serviceMessage.sendMail(mail);
@@ -160,6 +177,11 @@ class PetitionService {
       subject: "Petición de adopción rechazada.",
       html: `<p>
         ¡Lo sentimos ${adopter.name}! Tu petición de adopción para ${pet.name} fue <b>rechazada por el dueño<b>.
+        <br>
+        <br>
+        Atentamente,
+        <br>
+        El equipo de Petsibilities
       </p>`
     }
     const resp1 = await serviceMessage.sendMail(mail);

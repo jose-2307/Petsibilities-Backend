@@ -1,5 +1,5 @@
 const boom = require("@hapi/boom");
-
+const { config } = require("./../config/config");
 
 function checkRole(...roles) {
   return (req,res,next) => {
@@ -12,4 +12,14 @@ function checkRole(...roles) {
   }
 }
 
-module.exports = {checkRole};
+function checkApiKey(req,res,next) {
+  const apiKey = req.headers["api"];
+  if (!apiKey) next(boom.unauthorized());
+  if (apiKey === config.apiKey) {
+    next();
+  } else {
+    next(boom.unauthorized()); //no está autorizado para hacer peticiones
+  }
+}
+
+module.exports = {checkRole, checkApiKey};

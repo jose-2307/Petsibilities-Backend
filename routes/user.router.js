@@ -5,7 +5,7 @@ const UserService = require("./../services/user.service");
 const validatorHandler = require("./../middlewares/validator.handler");
 const { createUserSchema,updateUserSchema,getUserSchema,createScoreSchema } = require("./../schemas/user.schema");
 const { createPetSchema } = require("./../schemas/pet.schema");
-const { checkRole } = require("./../middlewares/auth.handler");
+const { checkRole,checkApiKey } = require("./../middlewares/auth.handler");
 
 const router = express.Router();
 const service = new UserService();
@@ -40,6 +40,7 @@ router.get("/:id",
 );
 
 router.post("/",
+  checkApiKey,
   validatorHandler(createUserSchema, "body"),
   async (req, res, next) => {
     try {
@@ -53,6 +54,8 @@ router.post("/",
 );
 
 router.post("/my-pet/:id",
+  passport.authenticate("jwt", {session: false}),
+  checkRole("Admin"),
   validatorHandler(getUserSchema, "params"),
   validatorHandler(createPetSchema, "body"),
   async (req, res, next) => {
@@ -68,6 +71,8 @@ router.post("/my-pet/:id",
 );
 
 router.post("/score/:id",
+  passport.authenticate("jwt", {session: false}),
+  checkRole("Admin"),
   validatorHandler(getUserSchema, "params"),
   validatorHandler(createScoreSchema, "body"),
   async (req, res, next) => {
@@ -83,6 +88,8 @@ router.post("/score/:id",
 );
 
 router.get("/score/:id",
+  passport.authenticate("jwt", {session: false}),
+  checkRole("Admin"),
   validatorHandler(getUserSchema, "params"),
   async (req, res, next) => {
     try {

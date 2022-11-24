@@ -4,12 +4,13 @@ const passport = require("passport");
 const GenderService = require("./../services/gender.service");
 const validatorHandler = require("./../middlewares/validator.handler");
 const { createGenderSchema, getGenderSchema } = require("./../schemas/gender.schema");
-const { checkRole } = require("./../middlewares/auth.handler");
+const { checkRole,checkApiKey } = require("./../middlewares/auth.handler");
 
 const router = express.Router();
 const service = new GenderService();
 
 router.get("/",
+  checkApiKey,
   async (req, res, next) => {
     try {
       const genders = await service.find();
@@ -21,6 +22,7 @@ router.get("/",
 );
 
 router.get("/:id",
+  checkApiKey,
   validatorHandler(getGenderSchema, "params"),
   async (req, res, next) => {
     try {

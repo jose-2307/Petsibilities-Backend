@@ -4,11 +4,13 @@ const passport = require("passport");
 const AuthService = require("./../services/auth.service");
 const validatorHandler = require("./../middlewares/validator.handler");
 const { loginSchema, refreshTokenSchema,recoverySchema,changePasswordSchema } = require("./../schemas/auth.schema");
+const { checkApiKey } = require("./../middlewares/auth.handler");
 
 const router = express.Router();
 const service = new AuthService();
 
 router.post("/login",
+  checkApiKey,
   passport.authenticate("local", {session: false}),
   validatorHandler(loginSchema),
   async (req, res, next) => {
@@ -46,6 +48,7 @@ router.patch("/logout",
 );
 
 router.post("/recovery-password",
+  checkApiKey,
   validatorHandler(recoverySchema),
   async (req, res, next) => {
     try {

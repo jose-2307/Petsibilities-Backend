@@ -4,12 +4,13 @@ const passport = require("passport");
 const CityService = require("./../services/city.service");
 const validatorHandler = require("./../middlewares/validator.handler");
 const { createCitySchema, getCitySchema } = require("./../schemas/city.schema");
-const { checkRole } = require("./../middlewares/auth.handler");
+const { checkRole,checkApiKey } = require("./../middlewares/auth.handler");
 
 const router = express.Router();
 const service = new CityService();
 
 router.get("/",
+  checkApiKey,
   async (req, res, next) => {
     try {
       const { city } = req.query;
@@ -22,6 +23,7 @@ router.get("/",
 );
 
 router.get("/:id",
+  checkApiKey,
   validatorHandler(getCitySchema, "params"),
   async (req, res, next) => {
     try {

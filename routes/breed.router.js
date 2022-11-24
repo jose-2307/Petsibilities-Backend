@@ -4,12 +4,13 @@ const passport = require("passport");
 const BreedService = require("./../services/breed.service");
 const validatorHandler = require("./../middlewares/validator.handler");
 const { createBreedSchema,getBreedSchema } = require("./../schemas/breed.schema");
-const { checkRole } = require("./../middlewares/auth.handler");
+const { checkRole,checkApiKey } = require("./../middlewares/auth.handler");
 
 const router = express.Router();
 const service = new BreedService();
 
 router.get("/",
+  checkApiKey,
   async (req, res, next) => {
     try {
       const breeds = await service.find();
@@ -21,6 +22,7 @@ router.get("/",
 );
 
 router.get("/:id",
+  checkApiKey,
   validatorHandler(getBreedSchema, "params"),
   async (req, res, next) => {
     try {

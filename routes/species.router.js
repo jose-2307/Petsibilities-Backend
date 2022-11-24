@@ -4,12 +4,13 @@ const passport = require("passport");
 const SpeciesService = require("./../services/species.service");
 const validatorHandler = require("./../middlewares/validator.handler");
 const { createSpeciesSchema,getSpeciesSchema } = require("./../schemas/species.schema");
-const { checkRole } = require("./../middlewares/auth.handler");
+const { checkRole,checkApiKey } = require("./../middlewares/auth.handler");
 
 const router = express.Router();
 const service = new SpeciesService();
 
 router.get("/",
+  checkApiKey,
   async (req, res, next) => {
     try {
       const species = await service.find();
@@ -21,6 +22,7 @@ router.get("/",
 );
 
 router.get("/:id",
+  checkApiKey,
   validatorHandler(getSpeciesSchema, "params"),
   async (req, res, next) => {
     try {

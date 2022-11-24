@@ -4,12 +4,13 @@ const passport = require("passport");
 const RegionService = require("./../services/region.service");
 const validatorHandler = require("./../middlewares/validator.handler");
 const { createRegionSchema,getRegionSchema } = require("./../schemas/region.schema");
-const { checkRole } = require("./../middlewares/auth.handler");
+const { checkRole,checkApiKey } = require("./../middlewares/auth.handler");
 
 const router = express.Router();
 const service = new RegionService();
 
 router.get("/",
+  checkApiKey,
   async (req, res, next) => {
     try {
       const regions = await service.find();
@@ -21,6 +22,7 @@ router.get("/",
 );
 
 router.get("/:id",
+  checkApiKey,
   validatorHandler(getRegionSchema, "params"),
   async (req, res, next) => {
     try {
